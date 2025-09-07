@@ -1,0 +1,565 @@
+{% extends "base.html" %}
+
+{% block title %}Nutrition - Food & Nutrition{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">
+            <i class="fas fa-utensils me-2"></i>
+            Nutrition Guidance & Meal Planning
+        </h1>
+        <button class="btn btn-outline-primary" onclick="speakText('Nutrition guidance page. Get personalized AI nutrition advice, discover community recipes, and learn food safety practices for healthy living.')">
+            <i class="fas fa-volume-up me-2"></i>
+            Page Guide
+        </button>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="quick-action-card">
+                <div class="action-icon bg-danger">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h6>AI Nutrition Advisor</h6>
+                <p class="small text-muted">Get personalized nutrition advice based on your needs</p>
+                <button class="btn btn-outline-danger btn-sm" onclick="showNutritionForm()">
+                    Get Advice
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="quick-action-card">
+                <div class="action-icon bg-success">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h6>Community Recipes</h6>
+                <p class="small text-muted">Discover healthy, budget-friendly recipes</p>
+                <button class="btn btn-outline-success btn-sm" onclick="showRecipes()">
+                    View Recipes
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="quick-action-card">
+                <div class="action-icon bg-info">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h6>Food Safety</h6>
+                <p class="small text-muted">Learn safe food handling and storage</p>
+                <button class="btn btn-outline-info btn-sm" onclick="showFoodSafety()">
+                    Safety Tips
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nutrition Resources -->
+    {% if recipes %}
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-utensils me-2"></i>
+                Budget-Friendly Recipes
+            </h3>
+        </div>
+        
+        {% for recipe in recipes.budget_friendly %}
+        <div class="col-lg-6">
+            <div class="recipe-card">
+                <div class="recipe-header">
+                    <h6>{{ recipe.name }}</h6>
+                    <span class="badge bg-success">Budget-Friendly</span>
+                </div>
+                <div class="recipe-content">
+                    <div class="ingredients mb-3">
+                        <h6 class="small fw-bold">Ingredients:</h6>
+                        <div class="ingredient-list">
+                            {% for ingredient in recipe.ingredients %}
+                            <span class="badge bg-light text-dark me-1 mb-1">{{ ingredient }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="instructions mb-3">
+                        <h6 class="small fw-bold">Instructions:</h6>
+                        <p class="small">{{ recipe.instructions }}</p>
+                    </div>
+                    <div class="nutrition">
+                        <h6 class="small fw-bold text-success">Nutrition Benefits:</h6>
+                        <p class="small text-success">{{ recipe.nutrition }}</p>
+                    </div>
+                </div>
+                <div class="recipe-footer">
+                    <button class="btn btn-outline-primary btn-sm" onclick="speakRecipe('{{ recipe.name }}', '{{ recipe.instructions }}')">
+                        <i class="fas fa-volume-up me-1"></i>
+                        Listen
+                    </button>
+                    <button class="btn btn-outline-success btn-sm" onclick="saveRecipe('{{ recipe.name }}')">
+                        <i class="fas fa-heart me-1"></i>
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Food Preservation -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-leaf me-2"></i>
+                Food Preservation Techniques
+            </h3>
+        </div>
+        
+        {% for preservation in recipes.preservation %}
+        <div class="col-md-6">
+            <div class="preservation-card">
+                <div class="preservation-header">
+                    <h6>{{ preservation.method }}</h6>
+                </div>
+                <div class="preservation-content">
+                    <p>{{ preservation.description }}</p>
+                    <div class="equipment-needed">
+                        <h6 class="small fw-bold">Equipment Needed:</h6>
+                        <p class="small text-muted">{{ preservation.equipment }}</p>
+                    </div>
+                </div>
+                <div class="preservation-footer">
+                    <button class="btn btn-outline-primary btn-sm" onclick="learnPreservation('{{ preservation.method }}')">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Nutrition Tips -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-lightbulb me-2"></i>
+                Daily Nutrition Tips
+            </h3>
+        </div>
+        <div class="col-12">
+            <div class="tips-grid">
+                {% for tip in recipes.nutrition_tips %}
+                <div class="tip-item">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    <span>{{ tip }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Food Safety Guidelines -->
+    {% if safety_guidelines %}
+    <div class="row g-4">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-shield-alt me-2"></i>
+                Food Safety Guidelines
+            </h3>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="safety-card">
+                <div class="safety-header bg-primary">
+                    <i class="fas fa-box"></i>
+                    <h6>Safe Storage</h6>
+                </div>
+                <div class="safety-content">
+                    <ul class="list-unstyled">
+                        {% for guideline in safety_guidelines.storage %}
+                        <li class="mb-2">
+                            <i class="fas fa-check text-primary me-2"></i>
+                            {{ guideline }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="safety-card">
+                <div class="safety-header bg-success">
+                    <i class="fas fa-hands-wash"></i>
+                    <h6>Food Preparation</h6>
+                </div>
+                <div class="safety-content">
+                    <ul class="list-unstyled">
+                        {% for guideline in safety_guidelines.preparation %}
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            {{ guideline }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="safety-card">
+                <div class="safety-header bg-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h6>Emergency Preparedness</h6>
+                </div>
+                <div class="safety-content">
+                    <ul class="list-unstyled">
+                        {% for guideline in safety_guidelines.emergency %}
+                        <li class="mb-2">
+                            <i class="fas fa-check text-danger me-2"></i>
+                            {{ guideline }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Default content when no specific data -->
+    <div class="row g-4">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-book me-2"></i>
+                Community Recipe Collection
+            </h3>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="recipe-card">
+                <div class="recipe-header">
+                    <h6>Nutritious Lentil Stew</h6>
+                    <span class="badge bg-success">High Protein</span>
+                </div>
+                <div class="recipe-content">
+                    <div class="ingredients mb-3">
+                        <h6 class="small fw-bold">Ingredients:</h6>
+                        <div class="ingredient-list">
+                            <span class="badge bg-light text-dark me-1 mb-1">1 cup lentils</span>
+                            <span class="badge bg-light text-dark me-1 mb-1">Mixed vegetables</span>
+                            <span class="badge bg-light text-dark me-1 mb-1">Spices</span>
+                            <span class="badge bg-light text-dark me-1 mb-1">Water</span>
+                        </div>
+                    </div>
+                    <div class="instructions mb-3">
+                        <h6 class="small fw-bold">Instructions:</h6>
+                        <p class="small">Rinse lentils, add to pot with water. Bring to boil, add vegetables and spices. Simmer for 20-25 minutes until tender.</p>
+                    </div>
+                    <div class="nutrition">
+                        <h6 class="small fw-bold text-success">Nutrition Benefits:</h6>
+                        <p class="small text-success">High in protein, fiber, iron, and vitamins. Low cost, filling meal.</p>
+                    </div>
+                </div>
+                <div class="recipe-footer">
+                    <button class="btn btn-outline-primary btn-sm" onclick="speakRecipe('Nutritious Lentil Stew', 'Rinse lentils, add to pot with water. Bring to boil, add vegetables and spices. Simmer for 20-25 minutes until tender.')">
+                        <i class="fas fa-volume-up me-1"></i>
+                        Listen
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="recipe-card">
+                <div class="recipe-header">
+                    <h6>Simple Rice and Beans</h6>
+                    <span class="badge bg-info">Complete Protein</span>
+                </div>
+                <div class="recipe-content">
+                    <div class="ingredients mb-3">
+                        <h6 class="small fw-bold">Ingredients:</h6>
+                        <div class="ingredient-list">
+                            <span class="badge bg-light text-dark me-1 mb-1">1 cup rice</span>
+                            <span class="badge bg-light text-dark me-1 mb-1">1 cup beans</span>
+                            <span class="badge bg-light text-dark me-1 mb-1">Onion</span>
+                            <span class="badge bg-light text-dark me-1 mb-1">Garlic</span>
+                        </div>
+                    </div>
+                    <div class="instructions mb-3">
+                        <h6 class="small fw-bold">Instructions:</h6>
+                        <p class="small">Cook rice and beans separately. Sauté onion and garlic. Combine all ingredients and season to taste.</p>
+                    </div>
+                    <div class="nutrition">
+                        <h6 class="small fw-bold text-success">Nutrition Benefits:</h6>
+                        <p class="small text-success">Complete protein when combined, high in fiber, B vitamins, and minerals.</p>
+                    </div>
+                </div>
+                <div class="recipe-footer">
+                    <button class="btn btn-outline-primary btn-sm" onclick="speakRecipe('Simple Rice and Beans', 'Cook rice and beans separately. Sauté onion and garlic. Combine all ingredients and season to taste.')">
+                        <i class="fas fa-volume-up me-1"></i>
+                        Listen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- AI Nutrition Advisor Modal -->
+<div class="modal fade" id="nutritionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-robot me-2"></i>
+                    AI Nutrition Advisor
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="nutritionForm" onsubmit="submitNutritionRequest(event)">
+                    <div class="mb-3">
+                        <label for="dietaryPreferences" class="form-label">Dietary Preferences & Goals *</label>
+                        <textarea class="form-control" id="dietaryPreferences" rows="3" required placeholder="e.g., Vegetarian, weight loss, muscle building, cultural preferences, food allergies..."></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="healthConditions" class="form-label">Health Conditions</label>
+                                <input type="text" class="form-control" id="healthConditions" placeholder="e.g., Diabetes, hypertension, heart disease...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="budget" class="form-label">Budget Level</label>
+                                <select class="form-select" id="budget">
+                                    <option value="low">Low Budget ($50-100/week)</option>
+                                    <option value="moderate" selected>Moderate ($100-150/week)</option>
+                                    <option value="flexible">Flexible ($150+/week)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="activityLevel" class="form-label">Activity Level</label>
+                                <select class="form-select" id="activityLevel">
+                                    <option value="sedentary">Sedentary (little exercise)</option>
+                                    <option value="light" selected>Light (1-3 days/week)</option>
+                                    <option value="moderate">Moderate (3-5 days/week)</option>
+                                    <option value="active">Very Active (6-7 days/week)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="cookingSkill" class="form-label">Cooking Experience</label>
+                                <select class="form-select" id="cookingSkill">
+                                    <option value="beginner">Beginner</option>
+                                    <option value="intermediate" selected>Intermediate</option>
+                                    <option value="advanced">Advanced</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-brain me-2"></i>
+                        Get Personalized Nutrition Plan
+                    </button>
+                </form>
+                
+                <div id="nutritionResults" style="display: none;">
+                    <hr>
+                    <div id="nutritionContent">
+                        <!-- Results will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showNutritionForm() {
+    const nutritionModal = new bootstrap.Modal(document.getElementById('nutritionModal'));
+    nutritionModal.show();
+    speakText('Opening AI nutrition advisor. Please describe your dietary needs and health goals for personalized recommendations.');
+}
+
+function showRecipes() {
+    document.querySelector('[href="#recipes"]')?.scrollIntoView({ behavior: 'smooth' });
+    speakText('Showing community recipes. These are budget-friendly, nutritious meals shared by community members.');
+}
+
+function showFoodSafety() {
+    document.querySelector('#safety-section')?.scrollIntoView({ behavior: 'smooth' });
+    speakText('Food safety guidelines include proper storage, safe preparation practices, and emergency preparedness for food security.');
+}
+
+function submitNutritionRequest(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const nutritionData = Object.fromEntries(formData.entries());
+    
+    document.getElementById('nutritionResults').style.display = 'block';
+    document.getElementById('nutritionContent').innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary mb-3" role="status"></div>
+            <p>Analyzing your nutritional needs and creating a personalized plan...</p>
+        </div>
+    `;
+    
+    fetch('/food/api/nutrition-advice', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(nutritionData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayNutritionAdvice(data);
+            speakText('Your personalized nutrition plan is ready with meal suggestions and health recommendations.');
+        } else {
+            document.getElementById('nutritionContent').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Unable to generate nutrition advice: ${data.error}
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('Nutrition advice error:', error);
+        document.getElementById('nutritionContent').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-times me-2"></i>
+                Error getting nutrition advice. Please try again.
+            </div>
+        `;
+    });
+}
+
+function displayNutritionAdvice(data) {
+    document.getElementById('nutritionContent').innerHTML = `
+        <div class="nutrition-plan">
+            <h6 class="mb-4 text-primary">
+                <i class="fas fa-heartbeat me-2"></i>
+                Your Personalized Nutrition Plan
+            </h6>
+            
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="stat-highlight text-center">
+                        <div class="stat-number text-primary">${data.daily_calories}</div>
+                        <div class="stat-label">Daily Calories</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-highlight text-center">
+                        <div class="stat-number text-success">${data.meal_suggestions.length}</div>
+                        <div class="stat-label">Meal Ideas</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-highlight text-center">
+                        <div class="stat-number text-info">${data.nutritional_tips.length}</div>
+                        <div class="stat-label">Health Tips</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="plan-sections">
+                <div class="section mb-4">
+                    <h6 class="text-success">
+                        <i class="fas fa-utensils me-2"></i>
+                        Recommended Meals
+                    </h6>
+                    <div class="meal-list">
+                        ${data.meal_suggestions.map(meal => `
+                            <div class="meal-item">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                ${meal}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="section mb-4">
+                    <h6 class="text-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Nutrition Tips
+                    </h6>
+                    <div class="tips-grid">
+                        ${data.nutritional_tips.map(tip => `
+                            <div class="tip-item">
+                                <i class="fas fa-arrow-right text-info me-2"></i>
+                                ${tip}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                ${data.warnings.length > 0 ? `
+                    <div class="section">
+                        <h6 class="text-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Important Considerations
+                        </h6>
+                        <div class="alert alert-warning">
+                            <ul class="mb-0">
+                                ${data.warnings.map(warning => `<li>${warning}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+            
+            <div class="plan-actions mt-4">
+                <button class="btn btn-outline-primary" onclick="downloadNutritionPlan()">
+                    <i class="fas fa-download me-2"></i>
+                    Save Plan
+                </button>
+                <button class="btn btn-outline-success" onclick="shareNutritionPlan()">
+                    <i class="fas fa-share me-2"></i>
+                    Share with Family
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function speakRecipe(recipeName, instructions) {
+    const recipeText = `Recipe for ${recipeName}: ${instructions}`;
+    speakText(recipeText);
+}
+
+function saveRecipe(recipeName) {
+    speakText(`Recipe for ${recipeName} saved to your collection.`);
+    // In a real app, this would save to local storage or user account
+    alert(`${recipeName} saved to your recipe collection!`);
+}
+
+function learnPreservation(method) {
+    speakText(`${method} is a traditional food preservation technique that helps extend food shelf life and reduce waste.`);
+}
+
+function downloadNutritionPlan() {
+    speakText('Your nutrition plan would be downloaded as a PDF for easy reference and sharing with healthcare providers.');
+}
+
+function shareNutritionPlan() {
+    speakText('Sharing nutrition plan with family members to support healthy eating goals together.');
+}
+</script>
+{% endblock %}

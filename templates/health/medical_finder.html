@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+{% block title %}Medical Facility Finder - Community Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">
+            <i class="fas fa-hospital me-2"></i>
+            Medical Facility Finder
+        </h1>
+        <button class="btn btn-outline-primary" onclick="speakText('Medical facility finder to locate hospitals, clinics, and health services near you. Use voice commands or manual search.')">
+            <i class="fas fa-volume-up me-2"></i>
+            Page Guide
+        </button>
+    </div>
+
+    <!-- Search Controls -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h6 class="card-title mb-3">Find Medical Facilities</h6>
+            
+            <!-- Location Search -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="manual-location-input" 
+                               placeholder="Search hospital name or location (e.g., Yashoda Hospital New Delhi)">
+                        <button class="btn btn-outline-secondary" type="button" id="search-location-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div id="location-status" class="d-none mt-2">
+                        <small id="location-text" class="text-muted"></small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary w-100" id="find-location-btn">
+                        <i class="fas fa-crosshairs me-2"></i>Find My Location
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Filters -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label for="facility-type-select" class="form-label small">Facility Type</label>
+                    <select class="form-select" id="facility-type-select">
+                        <option value="">All Medical Facilities</option>
+                        <option value="hospital">Hospitals</option>
+                        <option value="clinic">Clinics</option>
+                        <option value="doctors">Doctors</option>
+                        <option value="pharmacy">Pharmacies</option>
+                        <option value="dentist">Dental Care</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="radius-select" class="form-label small">Search Radius</label>
+                    <select class="form-select" id="radius-select">
+                        <option value="5">5 km</option>
+                        <option value="10" selected>10 km</option>
+                        <option value="25">25 km</option>
+                        <option value="50">50 km</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small">&nbsp;</label>
+                    <button class="btn btn-success w-100" id="search-facilities-btn" disabled>
+                        <i class="fas fa-search me-2"></i>Search Facilities
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map and Results -->
+    <div class="row g-4">
+        <!-- Map -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body p-0">
+                    <div id="map" style="height: 500px; width: 100%;"></div>
+                    
+                    <!-- Loading Spinner -->
+                    <div class="loading-spinner position-absolute top-50 start-50 translate-middle d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-center">Searching for facilities...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Info -->
+            <div class="mt-3">
+                <div id="results-info" class="text-muted small"></div>
+            </div>
+        </div>
+
+        <!-- Facilities List -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Medical Facilities
+                    </h6>
+                </div>
+                <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                    <div id="facilities-list">
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-map-marker-alt fa-2x mb-3"></i>
+                            <p>Search for your location or enter a hospital name to find nearby medical facilities.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Contacts -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-phone me-2"></i>
+                        Emergency Contacts
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="emergency-contact">
+                                <div class="contact-number text-danger fs-3">112</div>
+                                <div class="contact-label">Emergency</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="emergency-contact">
+                                <div class="contact-number text-warning fs-4">102</div>
+                                <div class="contact-label">Ambulance</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="emergency-contact">
+                                <div class="contact-number text-info fs-4">100</div>
+                                <div class="contact-label">Police</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="emergency-contact">
+                                <div class="contact-number text-success fs-4">101</div>
+                                <div class="contact-label">Fire</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.facility-marker {
+    background: white;
+    border: 2px solid #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.facility-marker.hospital {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.facility-marker.clinic {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.facility-marker.pharmacy {
+    border-color: #ffc107;
+    color: #ffc107;
+}
+
+.facility-marker.doctors {
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.facility-marker.dentist {
+    border-color: #6f42c1;
+    color: #6f42c1;
+}
+
+.facility-number {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.facility-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.facility-item:hover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.facility-item .facility-number {
+    position: static;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.facility-details {
+    flex-grow: 1;
+}
+
+.facility-details h6 {
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.facility-type {
+    color: #6c757d;
+    font-size: 0.9em;
+    margin: 0 0 5px 0;
+    text-transform: capitalize;
+}
+
+.facility-address {
+    color: #6c757d;
+    font-size: 0.85em;
+    margin: 0 0 5px 0;
+}
+
+.facility-distance {
+    color: #28a745;
+    font-size: 0.85em;
+    font-weight: 500;
+    margin: 0;
+}
+
+.facility-hours {
+    color: #6c757d;
+    font-size: 0.8em;
+    margin: 5px 0 0 0;
+}
+
+.facility-actions {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.facility-popup h6 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.facility-popup .facility-type {
+    background: #007bff;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.facility-popup .facility-address {
+    margin-bottom: 8px;
+}
+
+.facility-popup .facility-phone {
+    margin-bottom: 10px;
+}
+
+.popup-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.emergency-contact {
+    padding: 15px;
+}
+
+.contact-number {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.contact-label {
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.no-results, .error-message {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.no-results i, .error-message i {
+    display: block;
+    margin-bottom: 15px;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/map.js') }}"></script>
+{% endblock %}

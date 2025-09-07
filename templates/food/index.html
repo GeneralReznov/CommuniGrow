@@ -1,0 +1,828 @@
+{% extends "base.html" %}
+
+{% block title %}Food & Nutrition - Community Platform{% endblock %}
+
+{% block content %}
+<!-- Futuristic Food Header -->
+<section class="futuristic-hero food-theme">
+    <div class="container">
+        <div class="hero-content" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="hero-title-small">
+                        <i class="fas fa-apple-alt me-2 module-icon-animated"></i>
+                        Food & Nutrition Security
+                    </h1>
+                    <p class="hero-subtitle-small" data-aos="fade-up" data-aos-delay="300">
+                        Smart marketplace connections, AI-powered nutrition guidance, and sustainable community food sharing networks.
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end" data-aos="fade-left" data-aos-delay="600">
+                    <button class="btn btn-futuristic-food" onclick="speakText('Food and Nutrition module. Access intelligent marketplace, get personalized nutrition guidance, share recipes, and learn food safety with AI assistance. Use voice commands like show marketplace or nutrition advice.')">
+                        <i class="fas fa-volume-up me-2"></i>Voice Guide
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Floating Food Elements -->
+    <div class="floating-element" style="top: 20%; left: 10%; animation-delay: 0s;">
+        <i class="fas fa-carrot fa-2x text-warning-light"></i>
+    </div>
+    <div class="floating-element" style="top: 30%; right: 15%; animation-delay: 2s;">
+        <i class="fas fa-seedling fa-2x text-warning"></i>
+    </div>
+    <div class="floating-element" style="bottom: 30%; left: 15%; animation-delay: 1s;">
+        <i class="fas fa-utensils fa-2x text-warning-dark"></i>
+    </div>
+</section>
+
+<div class="container py-5">
+    <!-- Quick Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="feature-card-futuristic food-card text-center" data-aos="fade-up">
+                <div class="stat-icon bg-success text-white">
+                    <i class="fas fa-store"></i>
+                </div>
+                <h6 class="mt-3">Fresh Produce</h6>
+                <p class="text-muted">{{ recent_listings|selectattr('category', 'equalto', 'marketplace')|list|length or '15+' }} Available</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic food-card text-center" data-aos="fade-up">
+                <div class="stat-icon bg-info text-white">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                <h6 class="mt-3">Food Sharing</h6>
+                <p class="text-muted">{{ recent_listings|selectattr('category', 'equalto', 'sharing')|list|length or '8+' }} Items</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic food-card text-center" data-aos="fade-up">
+                <div class="stat-icon bg-warning text-white">
+                    <i class="fas fa-recycle"></i>
+                </div>
+                <h6 class="mt-3">Surplus Rescue</h6>
+                <p class="text-muted">{{ recent_listings|selectattr('category', 'equalto', 'surplus')|list|length or '12+' }} Items</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic food-card text-center" data-aos="fade-up">
+                <div class="stat-icon bg-danger text-white">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h6 class="mt-3">Recipes</h6>
+                <p class="text-muted">50+ Community</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="feature-card-futuristic food-card" data-aos="fade-up">
+                <div class="action-icon bg-primary">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h6>Browse Marketplace</h6>
+                <p class="small text-muted">Find fresh local produce and food items</p>
+                <a href="{{ url_for('food.marketplace') }}" class="btn btn-outline-primary btn-sm">
+                    Browse Items
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic food-card" data-aos="fade-up">
+                <div class="action-icon bg-success">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h6>Nutrition Guidance</h6>
+                <p class="small text-muted">Get personalized nutrition advice</p>
+                <a href="{{ url_for('food.nutrition') }}" class="btn btn-outline-success btn-sm">
+                    Get Advice
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic food-card" data-aos="fade-up">
+                <div class="action-icon bg-warning">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <h6>Post Food Item</h6>
+                <p class="small text-muted">Share or sell food items</p>
+                <button class="btn btn-outline-warning btn-sm" onclick="showFoodForm()">
+                    Post Item
+                </button>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic food-card" data-aos="fade-up">
+                <div class="action-icon bg-info">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h6>Agricultural Assistant</h6>
+                <p class="small text-muted">Get AI-powered farming advice</p>
+                <a href="{{ url_for('food.agricultural_chat') }}" class="btn btn-outline-info btn-sm">
+                    Ask Expert
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agricultural Features Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="section-title text-center mb-4" data-aos="fade-up">
+                <i class="fas fa-seedling me-2"></i>
+                Agricultural Support System
+            </h3>
+            <p class="text-center text-muted mb-5" data-aos="fade-up" data-aos-delay="200">
+                Comprehensive tools and resources for farmers and food producers
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-4">
+            <div class="feature-card-futuristic agricultural-card" data-aos="fade-up">
+                <div class="feature-icon bg-primary">
+                    <i class="fas fa-cloud-sun-rain"></i>
+                </div>
+                <h5>Weather Forecast</h5>
+                <p class="text-muted">Get agricultural weather predictions and farming recommendations</p>
+                <a href="{{ url_for('food.weather_forecast') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-thermometer-half me-2"></i>Check Weather
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="feature-card-futuristic agricultural-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon bg-info">
+                    <i class="fas fa-tint"></i>
+                </div>
+                <h5>Water Management</h5>
+                <p class="text-muted">Smart irrigation scheduling and water conservation strategies</p>
+                <a href="{{ url_for('food.water_management') }}" class="btn btn-outline-info">
+                    <i class="fas fa-droplet me-2"></i>Plan Irrigation
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="feature-card-futuristic agricultural-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon bg-success">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h5>Crop Prices</h5>
+                <p class="text-muted">Real-time market prices and selling recommendations</p>
+                <a href="{{ url_for('food.crop_prices') }}" class="btn btn-outline-success">
+                    <i class="fas fa-coins me-2"></i>View Prices
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="feature-card-futuristic agricultural-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-icon bg-warning">
+                    <i class="fas fa-university"></i>
+                </div>
+                <h5>Government Schemes</h5>
+                <p class="text-muted">Find agricultural subsidies and support programs</p>
+                <a href="{{ url_for('food.government_schemes') }}" class="btn btn-outline-warning">
+                    <i class="fas fa-search me-2"></i>Find Schemes
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="feature-card-futuristic agricultural-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-icon bg-danger">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h5>Community Recipes</h5>
+                <p class="text-muted">Discover local cooking wisdom and food preparation</p>
+                <a href="#recipes" class="btn btn-outline-danger">
+                    <i class="fas fa-utensils me-2"></i>View Recipes
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Food Listings -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-clock me-2"></i>
+                Recent Food Listings
+            </h3>
+        </div>
+        
+        {% if recent_listings %}
+        {% for listing in recent_listings %}
+        <div class="col-lg-4 col-md-6">
+            <div class="food-listing-card">
+                <div class="listing-header">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h6 class="listing-title">{{ listing.title }}</h6>
+                        <span class="badge bg-{{ 'primary' if listing.category == 'marketplace' else 'success' if listing.category == 'sharing' else 'warning' }}">
+                            {{ listing.category.title() }}
+                        </span>
+                    </div>
+                    {% if listing.price and listing.category == 'marketplace' %}
+                    <div class="listing-price">
+                        <strong>${{ "%.2f"|format(listing.price) }}</strong>
+                        {% if listing.quantity %}
+                        <small class="text-muted">/ {{ listing.quantity }}</small>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="listing-content">
+                    <p class="listing-description">{{ listing.description[:100] }}{% if listing.description|length > 100 %}...{% endif %}</p>
+                    
+                    <div class="listing-details">
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                            <span>{{ listing.location }}</span>
+                        </div>
+                        {% if listing.quantity %}
+                        <div class="detail-item">
+                            <i class="fas fa-weight text-muted me-2"></i>
+                            <span>{{ listing.quantity }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="detail-item">
+                            <i class="fas fa-calendar text-muted me-2"></i>
+                            <span>{{ listing.created_at.strftime('%B %d') }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="listing-footer">
+                    {% if listing.category == 'marketplace' and listing.price %}
+                    <button class="btn btn-primary btn-sm" onclick="purchaseItem({{ listing.id }}, '{{ listing.title }}', {{ listing.price }})">
+                        <i class="fas fa-shopping-cart me-1"></i>
+                        Buy Now
+                    </button>
+                    {% else %}
+                    <button class="btn btn-outline-primary btn-sm" onclick="contactSeller('{{ listing.contact_info or 'Contact via platform' }}', '{{ listing.title }}')">
+                        <i class="fas fa-envelope me-1"></i>
+                        Contact
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <div class="empty-state text-center py-5">
+                <i class="fas fa-apple-alt fa-4x text-muted mb-4"></i>
+                <h4>No Food Listings Yet</h4>
+                <p class="text-muted mb-4">Be the first to share or sell food items in your community!</p>
+                <button class="btn btn-primary btn-lg" onclick="showFoodForm()">
+                    <i class="fas fa-plus me-2"></i>
+                    Post First Item
+                </button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Nutrition & Food Safety -->
+    <div class="row g-4">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-shield-alt me-2"></i>
+                Nutrition & Food Safety Resources
+            </h3>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="resource-card">
+                <div class="resource-header">
+                    <i class="fas fa-heartbeat text-danger fa-2x mb-3"></i>
+                    <h5>Personalized Nutrition</h5>
+                </div>
+                <div class="resource-content">
+                    <p>Get AI-powered nutrition advice tailored to your dietary needs, health conditions, and budget.</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Meal planning assistance</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Calorie and nutrient tracking</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Budget-friendly recommendations</li>
+                    </ul>
+                </div>
+                <div class="resource-footer">
+                    <button class="btn btn-outline-danger" onclick="getNutritionAdvice()">
+                        <i class="fas fa-robot me-2"></i>
+                        Get AI Nutrition Advice
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="resource-card">
+                <div class="resource-header">
+                    <i class="fas fa-shield-alt text-primary fa-2x mb-3"></i>
+                    <h5>Food Safety Guide</h5>
+                </div>
+                <div class="resource-content">
+                    <p>Learn essential food safety practices to keep your family healthy and prevent foodborne illness.</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Safe food storage methods</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Proper cooking temperatures</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Food preservation techniques</li>
+                    </ul>
+                </div>
+                <div class="resource-footer">
+                    <a href="{{ url_for('food.food_safety') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-book me-2"></i>
+                        Learn Food Safety
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Food Posting Modal -->
+<div class="modal fade" id="foodModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>
+                    Share Food Item
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="foodForm" onsubmit="submitFood(event)">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="foodTitle" class="form-label">Item Title *</label>
+                        <input type="text" class="form-control" id="foodTitle" name="title" required placeholder="e.g., Fresh tomatoes, Homemade bread">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="foodDescription" class="form-label">Description *</label>
+                        <textarea class="form-control" id="foodDescription" name="description" rows="3" required placeholder="Describe the food item, freshness, preparation method..."></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="foodCategory" class="form-label">Category *</label>
+                                <select class="form-select" id="foodCategory" name="category" required onchange="togglePriceField()">
+                                    <option value="">Select category</option>
+                                    <option value="marketplace">Marketplace (For Sale)</option>
+                                    <option value="sharing">Community Sharing (Free)</option>
+                                    <option value="surplus">Surplus Rescue (Free)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3" id="priceField" style="display: none;">
+                                <label for="foodPrice" class="form-label">Price ($)</label>
+                                <input type="number" class="form-control" id="foodPrice" name="price" step="0.01" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="foodQuantity" class="form-label">Quantity/Amount</label>
+                                <input type="text" class="form-control" id="foodQuantity" name="quantity" placeholder="e.g., 5 lbs, 12 pieces, 1 loaf">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="foodLocation" class="form-label">Location *</label>
+                                <input type="text" class="form-control" id="foodLocation" name="location" required placeholder="Neighborhood or pickup location">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="foodContact" class="form-label">Contact Information *</label>
+                        <input type="text" class="form-control" id="foodContact" name="contact_info" required placeholder="Phone number or email">
+                        <div class="form-text">This will be shared with interested buyers/recipients.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>
+                        Post Item
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Nutrition Advice Modal -->
+<div class="modal fade" id="nutritionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-robot me-2"></i>
+                    AI Nutrition Advisor
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="nutritionForm" onsubmit="submitNutritionRequest(event)">
+                    <div class="mb-3">
+                        <label for="dietaryPreferences" class="form-label">Dietary Preferences *</label>
+                        <textarea class="form-control" id="dietaryPreferences" rows="2" required placeholder="e.g., Vegetarian, low sodium, diabetes-friendly, cultural preferences..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="healthConditions" class="form-label">Health Conditions (Optional)</label>
+                        <input type="text" class="form-control" id="healthConditions" placeholder="e.g., Diabetes, high blood pressure, allergies...">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="budget" class="form-label">Budget Level</label>
+                        <select class="form-select" id="budget">
+                            <option value="low">Low Budget</option>
+                            <option value="moderate" selected>Moderate Budget</option>
+                            <option value="flexible">Flexible Budget</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-brain me-2"></i>
+                        Get Nutrition Advice
+                    </button>
+                </form>
+                
+                <div id="nutritionResults" style="display: none;">
+                    <hr>
+                    <div id="nutritionContent">
+                        <!-- Results will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showFoodForm() {
+    const foodModal = new bootstrap.Modal(document.getElementById('foodModal'));
+    foodModal.show();
+}
+
+function togglePriceField() {
+    const category = document.getElementById('foodCategory').value;
+    const priceField = document.getElementById('priceField');
+    
+    if (category === 'marketplace') {
+        priceField.style.display = 'block';
+        document.getElementById('foodPrice').required = true;
+    } else {
+        priceField.style.display = 'none';
+        document.getElementById('foodPrice').required = false;
+        document.getElementById('foodPrice').value = '';
+    }
+}
+
+function submitFood(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const foodData = Object.fromEntries(formData.entries());
+    
+    // Convert price to number if provided
+    if (foodData.price) {
+        foodData.price = parseFloat(foodData.price);
+    }
+    
+    fetch('/food/post-listing', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(foodData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            speakText(`Food item posted successfully! Your ${foodData.category} listing will help connect community members with food resources.`);
+            bootstrap.Modal.getInstance(document.getElementById('foodModal')).hide();
+            location.reload();
+        } else {
+            alert('Error posting food item: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error posting food item. Please try again.');
+    });
+}
+
+function purchaseItem(itemId, itemTitle, price) {
+    if (confirm(`Purchase ${itemTitle} for $${price.toFixed(2)}?`)) {
+        // Create Stripe checkout session
+        fetch('/payments/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount: price,
+                item_name: itemTitle,
+                item_description: `Food marketplace purchase: ${itemTitle}`,
+                return_url: '/food/marketplace'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.checkout_url) {
+                window.location.href = data.checkout_url;
+            } else {
+                alert('Payment processing error. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Payment error:', error);
+            alert('Payment processing error. Please try again.');
+        });
+    }
+}
+
+function contactSeller(contactInfo, itemTitle) {
+    speakText(`Contact information for ${itemTitle}: ${contactInfo}`);
+    
+    if (contactInfo.includes('@')) {
+        window.location.href = `mailto:${contactInfo}?subject=Interest in ${itemTitle}`;
+    } else if (contactInfo.includes('platform')) {
+        alert('Please use the community platform messaging system to contact this member.');
+    } else {
+        alert(`Contact: ${contactInfo}`);
+    }
+}
+
+function getNutritionAdvice() {
+    const nutritionModal = new bootstrap.Modal(document.getElementById('nutritionModal'));
+    nutritionModal.show();
+}
+
+function submitNutritionRequest(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const nutritionData = Object.fromEntries(formData.entries());
+    
+    // Show loading state
+    document.getElementById('nutritionResults').style.display = 'block';
+    document.getElementById('nutritionContent').innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary mb-3" role="status"></div>
+            <p>Analyzing your nutritional needs and creating personalized recommendations...</p>
+        </div>
+    `;
+    
+    fetch('/food/api/nutrition-advice', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(nutritionData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayNutritionAdvice(data);
+            speakText('Your personalized nutrition plan is ready. Review the recommendations for healthy eating within your budget.');
+        } else {
+            document.getElementById('nutritionContent').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Unable to generate nutrition advice: ${data.error}
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('Nutrition advice error:', error);
+        document.getElementById('nutritionContent').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-times me-2"></i>
+                Error getting nutrition advice. Please try again.
+            </div>
+        `;
+    });
+}
+
+function displayNutritionAdvice(data) {
+    document.getElementById('nutritionContent').innerHTML = `
+        <div class="nutrition-advice">
+            <h6 class="mb-3">Your Personalized Nutrition Plan</h6>
+            
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="advice-section">
+                        <h6 class="text-primary">
+                            <i class="fas fa-calculator me-2"></i>
+                            Daily Calories
+                        </h6>
+                        <p class="h4 text-primary">${data.daily_calories}</p>
+                        <small class="text-muted">Recommended daily intake</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="advice-section">
+                        <h6 class="text-success">
+                            <i class="fas fa-utensils me-2"></i>
+                            Meal Suggestions
+                        </h6>
+                        <ul class="list-unstyled">
+                            ${data.meal_suggestions.slice(0, 3).map(meal => `
+                                <li class="mb-1">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    ${meal}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="advice-section mt-4">
+                <h6 class="text-info">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Nutritional Tips
+                </h6>
+                <div class="row g-2">
+                    ${data.nutritional_tips.map(tip => `
+                        <div class="col-md-6">
+                            <div class="tip-item">
+                                <i class="fas fa-arrow-right text-info me-2"></i>
+                                ${tip}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            ${data.warnings.length > 0 ? `
+                <div class="advice-section mt-4">
+                    <h6 class="text-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Important Notes
+                    </h6>
+                    <div class="alert alert-warning">
+                        <ul class="mb-0">
+                            ${data.warnings.map(warning => `<li>${warning}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+// Voice command handling for food page
+function handleFoodVoiceCommand(command) {
+    const lowerCommand = command.toLowerCase();
+    
+    if (lowerCommand.includes('marketplace') || lowerCommand.includes('buy food')) {
+        window.location.href = "{{ url_for('food.marketplace') }}";
+    } else if (lowerCommand.includes('nutrition') || lowerCommand.includes('diet advice')) {
+        getNutritionAdvice();
+        speakText('Opening nutrition advisor. Please describe your dietary preferences and health needs.');
+    } else if (lowerCommand.includes('post food') || lowerCommand.includes('share food')) {
+        showFoodForm();
+        speakText('Opening food posting form. Please describe the food item you want to share or sell.');
+    } else if (lowerCommand.includes('recipes') || lowerCommand.includes('cooking')) {
+        window.location.href = "{{ url_for('food.recipes') }}";
+    } else if (lowerCommand.includes('food safety')) {
+        window.location.href = "{{ url_for('food.food_safety') }}";
+    }
+}
+
+// Set up voice command handling
+if (typeof window.globalVoiceHandler !== 'undefined') {
+    window.globalVoiceHandler = handleFoodVoiceCommand;
+}
+</script>
+
+<style>
+/* Agricultural Features Styling */
+.agricultural-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,249,250,0.95));
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.agricultural-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent, rgba(255,255,255,0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.agricultural-card:hover::before {
+    opacity: 1;
+}
+
+.agricultural-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    border-color: rgba(0,123,255,0.2);
+}
+
+.agricultural-card .feature-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 28px;
+    position: relative;
+    z-index: 2;
+}
+
+.agricultural-card h5 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+.agricultural-card p {
+    color: #6c757d;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.agricultural-card .btn {
+    font-weight: 600;
+    border-radius: 25px;
+    padding: 10px 25px;
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.agricultural-card .btn:hover {
+    transform: scale(1.05);
+}
+
+/* Enhanced agricultural animations */
+@keyframes agricultural-float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-10px) rotate(2deg); }
+    66% { transform: translateY(5px) rotate(-1deg); }
+}
+
+.agricultural-card:nth-child(odd) {
+    animation: agricultural-float 6s ease-in-out infinite;
+    animation-delay: 0.5s;
+}
+
+.agricultural-card:nth-child(even) {
+    animation: agricultural-float 6s ease-in-out infinite reverse;
+    animation-delay: 1s;
+}
+
+/* Responsive adjustments for agricultural features */
+@media (max-width: 768px) {
+    .agricultural-card {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .agricultural-card .feature-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+}
+</style>
+{% endblock %}

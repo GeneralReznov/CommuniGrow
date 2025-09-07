@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Community Empowerment Platform{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Leaflet CSS for maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Particles.js for futuristic effects -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/futuristic.css') }}" rel="stylesheet">
+    
+    <meta name="description" content="Empowering underserved communities through sustainable development goals">
+    <meta name="keywords" content="community, sustainability, climate, health, education, food security">
+</head>
+<body>
+    <!-- Voice Navigation Bar -->
+    <div id="voice-nav" class="voice-nav">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <button id="voice-tour-btn" class="btn btn-voice" title="Start Voice Tour">
+                        <i class="fas fa-headphones"></i>
+                        <span class="d-none d-md-inline">Voice Tour</span>
+                    </button>
+                </div>
+                <div class="col-auto">
+                    <button id="speak-btn" class="btn btn-voice" title="Speak Current Page">
+                        <i class="fas fa-volume-up"></i>
+                        <span class="d-none d-md-inline">Listen</span>
+                    </button>
+                </div>
+                <div class="col-auto">
+                    <button id="listen-btn" class="btn btn-voice" title="Voice Commands">
+                        <i class="fas fa-microphone"></i>
+                        <span class="d-none d-md-inline">Speak</span>
+                    </button>
+                </div>
+                <div class="col">
+                    <div id="voice-status" class="voice-status">
+                        Ready for voice commands
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button id="emergency-btn" class="btn btn-emergency" title="Emergency Information">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span class="d-none d-md-inline">Emergency</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ url_for('main.index') }}">
+                <i class="fas fa-hands-helping me-2"></i>
+                Community Platform
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.dashboard') }}">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('climate.index') }}">
+                            <i class="fas fa-leaf me-1"></i>Climate
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('skills.index') }}">
+                            <i class="fas fa-graduation-cap me-1"></i>Skills
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('food.index') }}">
+                            <i class="fas fa-apple-alt me-1"></i>Food
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('health.index') }}">
+                            <i class="fas fa-heartbeat me-1"></i>Health
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light mt-5">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Community Empowerment Platform</h5>
+                    <p class="mb-0">Empowering underserved communities through sustainable development and inclusive technology.</p>
+                </div>
+                <div class="col-md-3">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('main.dashboard') }}" class="text-light text-decoration-none">Dashboard</a></li>
+                        <li><a href="{{ url_for('health.emergency_info') }}" class="text-light text-decoration-none">Emergency Info</a></li>
+                        <li><a href="{{ url_for('main.voice_tour') }}" class="text-light text-decoration-none">Voice Tour</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6>Accessibility</h6>
+                    <ul class="list-unstyled">
+                        <li>
+                            <button class="btn btn-sm btn-outline-light mb-1" onclick="increaseFontSize()">
+                                <i class="fas fa-plus"></i> Larger Text
+                            </button>
+                        </li>
+                        <li>
+                            <button class="btn btn-sm btn-outline-light mb-1" onclick="toggleHighContrast()">
+                                <i class="fas fa-adjust"></i> High Contrast
+                            </button>
+                        </li>
+                        <li>
+                            <button class="btn btn-sm btn-outline-light" onclick="toggleReducedMotion()">
+                                <i class="fas fa-pause"></i> Reduce Motion
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="text-center">
+                <small>&copy; 2025 Community Empowerment Platform. Built for sustainable development.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Emergency Modal -->
+    <div class="modal fade" id="emergencyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Emergency Information
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Immediate Emergency</h6>
+                            <ul>
+                                <li><strong>Emergency Services:</strong> 911</li>
+                                <li><strong>Poison Control:</strong> 1-800-222-1222</li>
+                                <li><strong>Crisis Hotline:</strong> 988</li>
+                                <li><strong>Local Emergency:</strong> Check with local authorities</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Health Emergency Signs</h6>
+                            <ul>
+                                <li>Severe chest pain</li>
+                                <li>Difficulty breathing</li>
+                                <li>Severe bleeding</li>
+                                <li>Loss of consciousness</li>
+                                <li>Thoughts of self-harm</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning mt-3">
+                        <strong>Important:</strong> If you're experiencing a medical emergency, call emergency services immediately. This platform is for information and community support only.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="{{ url_for('health.emergency_info') }}" class="btn btn-primary">More Emergency Info</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="{{ url_for('static', filename='js/voice.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/futuristic.js') }}"></script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

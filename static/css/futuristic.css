@@ -1,0 +1,559 @@
+/* Futuristic Landing Page Styles */
+
+/* Particle Background */
+#particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Futuristic Hero Section */
+.futuristic-hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: transparent;
+}
+
+.hero-content {
+    text-align: center;
+    color: white;
+    z-index: 2;
+    max-width: 900px;
+    padding: 2rem;
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, #fff, #00d4ff, #fff);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 3s ease-in-out infinite;
+    text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Glowing Button */
+.btn-futuristic {
+    background: linear-gradient(45deg, #00d4ff, #00ff88);
+    border: none;
+    color: white;
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 50px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-futuristic:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0, 212, 255, 0.5);
+    color: white;
+}
+
+.btn-futuristic::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.btn-futuristic:hover::before {
+    left: 100%;
+}
+
+/* Feature Cards */
+.feature-grid-futuristic {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 4rem;
+}
+
+.feature-card-futuristic {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card-futuristic:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.feature-icon-futuristic {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, #00d4ff, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.feature-card-futuristic h3 {
+    color: #000 !important;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.feature-card-futuristic p {
+    color: #000 !important;
+    line-height: 1.6;
+}
+
+/* Scroll Reveal Sections */
+.reveal-section {
+    padding: 5rem 0;
+    position: relative;
+}
+
+.reveal-section.dark {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+}
+
+.reveal-section.light {
+    background: rgba(255, 255, 255, 0.95);
+    color: #000;
+}
+
+.reveal-section.light h2 {
+    color: #000 !important;
+}
+
+.reveal-section.light p {
+    color: #000 !important;
+}
+
+.reveal-section.light .lead {
+    color: #000 !important;
+}
+
+/* Timeline */
+.timeline-futuristic {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.timeline-item {
+    position: relative;
+    margin: 2rem 0;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 15px;
+    border-left: 4px solid #00d4ff;
+    transition: all 0.3s ease;
+}
+
+.timeline-item:hover {
+    transform: translateX(10px);
+    box-shadow: -10px 10px 30px rgba(0, 212, 255, 0.2);
+}
+
+.timeline-icon {
+    position: absolute;
+    left: -2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3rem;
+    height: 3rem;
+    background: linear-gradient(45deg, #00d4ff, #00ff88);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+/* Statistics Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+    justify-content: center;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.stat-card-futuristic {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card-futuristic:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #00d4ff, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    color: #2c3e50;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+/* Floating Elements */
+.floating-element {
+    position: absolute;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Pulse Animation */
+.pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.6); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .feature-grid-futuristic {
+        grid-template-columns: 1fr;
+    }
+    
+    .timeline-item {
+        margin-left: 1rem;
+    }
+    
+    .timeline-icon {
+        left: -1.5rem;
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
+/* Footer Futuristic */
+.footer-futuristic {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 3rem 0;
+    margin-top: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-futuristic::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+}
+
+/* Override default footer for futuristic pages */
+footer.bg-dark {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+footer.bg-dark::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00d4ff, #00ff88, transparent);
+}
+
+/* Loading Animation */
+.loading-dots {
+    display: inline-block;
+}
+
+.loading-dots::after {
+    content: '';
+    animation: dots 1.5s steps(5, end) infinite;
+}
+
+@keyframes dots {
+    0%, 20% { content: ''; }
+    40% { content: '.'; }
+    60% { content: '..'; }
+    80%, 100% { content: '...'; }
+}
+
+/* Scroll Progress Bar */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, #00d4ff, #00ff88);
+    z-index: 1000;
+    transition: width 0.1s ease;
+}
+
+/* Module Icon Animations */
+.module-icon-animated {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.module-icon-animated:hover {
+    transform: scale(1.2) rotate(5deg);
+}
+
+.module-icon-animated::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    z-index: -1;
+}
+
+.module-icon-animated:hover::after {
+    width: 100px;
+    height: 100px;
+}
+
+/* Module Theme Styling */
+
+/* Climate Theme */
+.climate-theme {
+    background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-title-small {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    color: white;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.hero-subtitle-small {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+}
+
+.btn-futuristic-climate {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-futuristic-climate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    color: white;
+}
+
+.climate-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+    box-shadow: 0 8px 32px rgba(40, 167, 69, 0.1);
+}
+
+.climate-icon {
+    background: linear-gradient(45deg, #28a745, #20c997);
+}
+
+.climate-card-content {
+    padding: 1.5rem;
+}
+
+/* Skills Theme */
+.skills-theme {
+    background: linear-gradient(135deg, #0c4a6e 0%, #0ea5e9 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-futuristic-skills {
+    background: linear-gradient(45deg, #0ea5e9, #06b6d4);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+}
+
+.btn-futuristic-skills:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+    color: white;
+}
+
+.skills-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    box-shadow: 0 8px 32px rgba(14, 165, 233, 0.1);
+}
+
+.skills-icon {
+    background: linear-gradient(45deg, #0ea5e9, #06b6d4);
+}
+
+/* Food Theme */
+.food-theme {
+    background: linear-gradient(135deg, #92400e 0%, #f59e0b 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-futuristic-food {
+    background: linear-gradient(45deg, #f59e0b, #fbbf24);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.btn-futuristic-food:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+    color: white;
+}
+
+.food-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    box-shadow: 0 8px 32px rgba(245, 158, 11, 0.1);
+}
+
+.food-icon {
+    background: linear-gradient(45deg, #f59e0b, #fbbf24);
+}
+
+/* Health Theme */
+.health-theme {
+    background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-futuristic-health {
+    background: linear-gradient(45deg, #dc2626, #ef4444);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+}
+
+.btn-futuristic-health:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+    color: white;
+}
+
+.health-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    box-shadow: 0 8px 32px rgba(220, 38, 38, 0.1);
+}
+
+.health-icon {
+    background: linear-gradient(45deg, #dc2626, #ef4444);
+}
+
+/* Additional Theme Colors */
+.text-success-light { color: #6ee7b7 !important; }
+.text-success-dark { color: #047857 !important; }
+.text-info-light { color: #7dd3fc !important; }
+.text-info-dark { color: #0c4a6e !important; }
+.text-warning-light { color: #fde68a !important; }
+.text-warning-dark { color: #92400e !important; }
+.text-danger-light { color: #fca5a5 !important; }
+.text-danger-dark { color: #991b1b !important; }

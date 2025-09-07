@@ -1,0 +1,499 @@
+{% extends "base.html" %}
+
+{% block title %}Crop Prices - Food & Nutrition{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="display-4 mb-3">
+                💰 <i class="fas fa-chart-line me-3"></i>
+                Agricultural Market Prices
+            </h1>
+            <p class="lead">Get real-time crop prices and market trends to make informed selling decisions</p>
+            <button class="btn btn-outline-primary" onclick="speakText('Agricultural market prices dashboard. Select your crop and region to view current wholesale prices, market trends, and selling recommendations.')">
+                <i class="fas fa-volume-up me-2"></i>
+                Price Guide
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card price-query-card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-search"></i> Search Crop Prices</h5>
+                    <form id="price-form">
+                        <div class="mb-3">
+                            <label for="crop-type" class="form-label">Crop Type</label>
+                            <select class="form-select" id="crop-type" required>
+                                <option value="" selected disabled>Select a crop</option>
+                                <option value="rice">Rice</option>
+                                <option value="wheat">Wheat</option>
+                                <option value="maize">Maize/Corn</option>
+                                <option value="pulses">Pulses (Dal)</option>
+                                <option value="cotton">Cotton</option>
+                                <option value="sugarcane">Sugarcane</option>
+                                <option value="potato">Potato</option>
+                                <option value="onion">Onion</option>
+                                <option value="tomato">Tomato</option>
+                                <option value="apple">Apple</option>
+                                <option value="mango">Mango</option>
+                                <option value="banana">Banana</option>
+                                <option value="cabbage">Cabbage</option>
+                                <option value="carrot">Carrot</option>
+                                <option value="spinach">Spinach</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="market-region" class="form-label">Market Region</label>
+                            <select class="form-select" id="market-region">
+                                <option value="all" selected>All India Average</option>
+                                <option value="north">Northern Markets</option>
+                                <option value="south">Southern Markets</option>
+                                <option value="east">Eastern Markets</option>
+                                <option value="west">Western Markets</option>
+                                <option value="central">Central Markets</option>
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary price-search-btn">
+                                <i class="fas fa-search"></i> Get Latest Prices
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card info-card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-info-circle"></i> Market Information</h5>
+                    <p class="small">Crop prices are sourced from Agricultural Produce Market Committees (APMCs) across India.</p>
+                    
+                    <div class="market-factors">
+                        <h6 class="text-primary">💡 Price Factors</h6>
+                        <ul class="market-info-list small">
+                            <li><i class="fas fa-map-marker-alt text-info"></i> <strong>Location:</strong> Transport costs affect regional prices</li>
+                            <li><i class="fas fa-calendar-alt text-warning"></i> <strong>Season:</strong> Harvest periods impact availability</li>
+                            <li><i class="fas fa-award text-success"></i> <strong>Quality:</strong> Grade and moisture content</li>
+                            <li><i class="fas fa-balance-scale text-danger"></i> <strong>Demand:</strong> Market forces and supply</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="market-update-time mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-clock"></i> Last Updated: 
+                            <span id="update-time">--</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card price-result-card">
+                <div class="card-body">
+                    <div id="loading" class="text-center py-5 d-none">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-3">Fetching latest market prices...</p>
+                    </div>
+                    
+                    <div id="initial-message" class="text-center py-5">
+                        <div class="initial-icon">
+                            <i class="fas fa-store fa-4x text-primary mb-3"></i>
+                        </div>
+                        <h4>Agricultural Market Prices</h4>
+                        <p class="text-muted">Select a crop and region to view current wholesale prices and market trends.</p>
+                        
+                        <div class="market-animation mt-4">
+                            <div class="row justify-content-center">
+                                <div class="col-4 text-center">
+                                    <i class="fas fa-seedling fa-2x text-success mb-2"></i>
+                                    <p class="small text-muted">Crops</p>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <i class="fas fa-arrow-right fa-2x text-primary mb-2"></i>
+                                    <p class="small text-muted">Markets</p>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <i class="fas fa-coins fa-2x text-warning mb-2"></i>
+                                    <p class="small text-muted">Prices</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="price-results" class="d-none">
+                        <div class="price-header mb-4">
+                            <h4 id="price-title">Crop Prices</h4>
+                            <div class="price-subtitle text-muted">Latest wholesale market prices</div>
+                        </div>
+                        
+                        <div class="current-price-display mb-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="price-main">
+                                        <div class="current-price">
+                                            ₹<span id="current-price">--</span>
+                                            <span class="price-unit">/quintal</span>
+                                        </div>
+                                        <div class="price-trend" id="price-trend">
+                                            <i class="fas fa-minus"></i> No change
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="price-stats">
+                                        <div class="stat-row d-flex justify-content-between py-2">
+                                            <span><i class="fas fa-arrow-up text-success"></i> High</span>
+                                            <span id="price-high" class="fw-bold">₹--</span>
+                                        </div>
+                                        <div class="stat-row d-flex justify-content-between py-2">
+                                            <span><i class="fas fa-arrow-down text-danger"></i> Low</span>
+                                            <span id="price-low" class="fw-bold">₹--</span>
+                                        </div>
+                                        <div class="stat-row d-flex justify-content-between py-2">
+                                            <span><i class="fas fa-chart-line text-info"></i> Average</span>
+                                            <span id="price-average" class="fw-bold">₹--</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="market-insights">
+                            <h5><i class="fas fa-lightbulb"></i> Market Insights & Recommendations</h5>
+                            <div id="price-analysis" class="analysis-content">
+                                <!-- Price analysis will be populated here -->
+                            </div>
+                        </div>
+                        
+                        <div class="regional-prices mt-4">
+                            <h5><i class="fas fa-map"></i> Regional Price Comparison</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Region</th>
+                                            <th>Price (₹/quintal)</th>
+                                            <th>Trend</th>
+                                            <th>Market Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="regional-prices-table">
+                                        <!-- Regional prices will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Tips Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Smart Selling Tips</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="tip-card text-center">
+                                <i class="fas fa-clock fa-2x text-primary mb-2"></i>
+                                <h6>Timing Matters</h6>
+                                <p class="small">Sell during peak demand seasons for better prices</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="tip-card text-center">
+                                <i class="fas fa-award fa-2x text-success mb-2"></i>
+                                <h6>Quality First</h6>
+                                <p class="small">Higher quality crops command premium prices</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="tip-card text-center">
+                                <i class="fas fa-truck fa-2x text-warning mb-2"></i>
+                                <h6>Market Access</h6>
+                                <p class="small">Compare prices across different markets</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="tip-card text-center">
+                                <i class="fas fa-handshake fa-2x text-info mb-2"></i>
+                                <h6>Direct Sales</h6>
+                                <p class="small">Consider direct-to-consumer sales for better margins</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.price-query-card, .info-card, .price-result-card {
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border: none;
+}
+
+.price-search-btn {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.price-search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+}
+
+.market-info-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.market-info-list li {
+    padding: 5px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.market-info-list li:last-child {
+    border-bottom: none;
+}
+
+.current-price {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #28a745;
+    line-height: 1;
+}
+
+.price-unit {
+    font-size: 1rem;
+    color: #666;
+    font-weight: normal;
+}
+
+.price-trend {
+    font-size: 1.1rem;
+    margin-top: 10px;
+}
+
+.price-trend.up {
+    color: #28a745;
+}
+
+.price-trend.down {
+    color: #dc3545;
+}
+
+.price-trend.neutral {
+    color: #6c757d;
+}
+
+.price-stats {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.stat-row {
+    border-bottom: 1px solid #e9ecef;
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+.analysis-content {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    border-left: 4px solid #28a745;
+}
+
+.tip-card {
+    padding: 20px;
+    border-radius: 10px;
+    background: #f8f9fa;
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.tip-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.market-animation i {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const priceForm = document.getElementById('price-form');
+    const loadingDiv = document.getElementById('loading');
+    const priceResults = document.getElementById('price-results');
+    const initialMessage = document.getElementById('initial-message');
+    const updateTime = document.getElementById('update-time');
+    
+    // Set current time
+    const now = new Date();
+    updateTime.textContent = now.toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    priceForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const cropType = document.getElementById('crop-type').value;
+        const marketRegion = document.getElementById('market-region').value;
+        
+        // Show loading
+        initialMessage.classList.add('d-none');
+        priceResults.classList.add('d-none');
+        loadingDiv.classList.remove('d-none');
+        
+        // Fetch price data
+        fetch('/food/api/crop-prices', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                crop: cropType,
+                region: marketRegion
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingDiv.classList.add('d-none');
+            
+            if (data.success) {
+                displayPriceResults(data, cropType, marketRegion);
+                priceResults.classList.remove('d-none');
+            } else {
+                alert('Error fetching price data: ' + (data.error || 'Unknown error'));
+                initialMessage.classList.remove('d-none');
+            }
+        })
+        .catch(error => {
+            loadingDiv.classList.add('d-none');
+            initialMessage.classList.remove('d-none');
+            console.error('Error:', error);
+            alert('Failed to fetch price data. Please try again.');
+        });
+    });
+    
+    function displayPriceResults(data, crop, region) {
+        // Update title
+        document.getElementById('price-title').textContent = 
+            `${formatCropName(crop)} Prices - ${formatRegionName(region)}`;
+        
+        // Update current price
+        document.getElementById('current-price').textContent = data.prices.current || '--';
+        document.getElementById('price-high').textContent = '₹' + (data.prices.high || '--');
+        document.getElementById('price-low').textContent = '₹' + (data.prices.low || '--');
+        document.getElementById('price-average').textContent = '₹' + (data.prices.average || '--');
+        
+        // Update trend
+        const trendElement = document.getElementById('price-trend');
+        if (data.prices.trend) {
+            const trend = data.prices.trend;
+            trendElement.className = `price-trend ${trend.direction}`;
+            
+            const icons = {
+                'up': 'fa-arrow-up',
+                'down': 'fa-arrow-down',
+                'neutral': 'fa-minus'
+            };
+            
+            const colors = {
+                'up': 'text-success',
+                'down': 'text-danger',
+                'neutral': 'text-muted'
+            };
+            
+            trendElement.innerHTML = `
+                <i class="fas ${icons[trend.direction]} ${colors[trend.direction]}"></i> 
+                ${trend.description}
+            `;
+        }
+        
+        // Update analysis
+        document.getElementById('price-analysis').innerHTML = `
+            <div class="analysis-item mb-3">
+                <h6 class="text-success"><i class="fas fa-chart-line"></i> Market Analysis</h6>
+                <p>${data.analysis.market_analysis || 'Current market conditions are stable with regular demand patterns.'}</p>
+            </div>
+            <div class="analysis-item mb-3">
+                <h6 class="text-primary"><i class="fas fa-lightbulb"></i> Selling Recommendations</h6>
+                <p>${data.analysis.recommendations || 'Monitor market trends and consider selling during peak demand periods.'}</p>
+            </div>
+            <div class="analysis-item">
+                <h6 class="text-info"><i class="fas fa-calendar-alt"></i> Seasonal Outlook</h6>
+                <p>${data.analysis.seasonal_outlook || 'Prices may vary based on seasonal demand and harvest cycles.'}</p>
+            </div>
+        `;
+        
+        // Update regional prices table
+        const regionalTable = document.getElementById('regional-prices-table');
+        regionalTable.innerHTML = '';
+        
+        if (data.regional_prices) {
+            data.regional_prices.forEach(region => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${region.name}</td>
+                    <td>₹${region.price}</td>
+                    <td>
+                        <span class="badge bg-${region.trend === 'up' ? 'success' : region.trend === 'down' ? 'danger' : 'secondary'}">
+                            <i class="fas fa-arrow-${region.trend === 'up' ? 'up' : region.trend === 'down' ? 'down' : 'right'}"></i>
+                            ${region.trend_text}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge bg-${region.status === 'active' ? 'success' : 'warning'}">
+                            ${region.status_text}
+                        </span>
+                    </td>
+                `;
+                regionalTable.appendChild(row);
+            });
+        }
+    }
+    
+    function formatCropName(crop) {
+        return crop.charAt(0).toUpperCase() + crop.slice(1);
+    }
+    
+    function formatRegionName(region) {
+        return region.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+    }
+});
+</script>
+{% endblock %}

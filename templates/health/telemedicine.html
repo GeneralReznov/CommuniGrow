@@ -1,0 +1,447 @@
+{% extends "base.html" %}
+
+{% block title %}Telemedicine & Support - Community Platform{% endblock %}
+
+{% block extra_css %}
+<style>
+@keyframes video-pulse {
+    0%, 100% { transform: scale(1) rotate(0deg); color: #17a2b8; filter: drop-shadow(0 0 15px rgba(23, 162, 184, 0.5)); }
+    50% { transform: scale(1.15) rotate(3deg); color: #0dcaf0; filter: drop-shadow(0 0 25px rgba(13, 202, 240, 0.8)); }
+}
+
+@keyframes support-wave {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+    50% { transform: translateY(-12px) scale(1.05); opacity: 1; }
+}
+
+.telemedicine-background {
+    background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 25%, #80deea 50%, #4dd0e1 75%, #26c6da 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.telemedicine-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g opacity="0.12"><circle cx="30" cy="25" r="2" fill="%2317a2b8"><animate attributeName="r" values="2;4;2" dur="3s" repeatCount="indefinite"/></circle><circle cx="70" cy="55" r="3" fill="%230dcaf0"><animate attributeName="r" values="3;5;3" dur="4s" repeatCount="indefinite"/></circle><rect x="20" y="60" width="6" height="8" rx="2" fill="%2326c6da" opacity="0.3"><animate attributeName="width" values="6;8;6" dur="2s" repeatCount="indefinite"/></rect></g></svg>');
+    background-size: 160px 160px;
+    animation: float-support 9s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes float-support {
+    0% { background-position: 0 0; }
+    100% { background-position: 160px 160px; }
+}
+
+.video-icon-large {
+    font-size: 6rem;
+    animation: video-pulse 2.8s infinite;
+}
+
+.telemedicine-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border: 3px solid #17a2b8;
+    border-radius: 22px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.telemedicine-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(23, 162, 184, 0.1), transparent);
+    animation: shimmer-teal 3.5s linear infinite;
+}
+
+@keyframes shimmer-teal {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.telemedicine-card:hover {
+    transform: translateY(-7px) scale(1.02);
+    box-shadow: 0 18px 35px rgba(23, 162, 184, 0.3);
+}
+
+.floating-telemedicine-icons {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.floating-telemedicine-icon {
+    position: absolute;
+    animation: support-wave 3.5s ease-in-out infinite;
+}
+
+.telemedicine-icon-1 { top: 18%; left: 6%; font-size: 2.4rem; color: rgba(23, 162, 184, 0.4); animation-delay: 0s; }
+.telemedicine-icon-2 { top: 72%; left: 4%; font-size: 2rem; color: rgba(13, 202, 240, 0.4); animation-delay: 1s; }
+.telemedicine-icon-3 { top: 22%; right: 9%; font-size: 2.6rem; color: rgba(38, 198, 218, 0.4); animation-delay: 2s; }
+.telemedicine-icon-4 { top: 68%; right: 7%; font-size: 2.1rem; color: rgba(23, 162, 184, 0.3); animation-delay: 3s; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="telemedicine-background">
+    <div class="floating-telemedicine-icons">
+        <i class="fas fa-video floating-telemedicine-icon telemedicine-icon-1"></i>
+        <i class="fas fa-headset floating-telemedicine-icon telemedicine-icon-2"></i>
+        <i class="fas fa-user-md floating-telemedicine-icon telemedicine-icon-3"></i>
+        <i class="fas fa-laptop-medical floating-telemedicine-icon telemedicine-icon-4"></i>
+    </div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center mb-5 animate-fade-in position-relative">
+                <i class="fas fa-video video-icon-large text-info mb-4"></i>
+                <h1 class="display-4 fw-bold text-info">
+                    📹 Telemedicine & Support
+                </h1>
+                <p class="lead text-dark animate-slide-up" style="animation-delay: 0.3s; font-weight: 600;">Connect with healthcare professionals and get instant AI-powered support</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Quick Support Options -->
+        <div class="col-lg-4">
+            <div class="card shadow-lg border-0 h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-headset me-2"></i>Instant Support
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-outline-primary" onclick="openAIHealthSupport()">
+                            <i class="fas fa-robot me-2"></i>AI Health Assistant
+                        </button>
+                        <button class="btn btn-outline-success" onclick="startEmergencyChat()">
+                            <i class="fas fa-ambulance me-2"></i>Emergency Support
+                        </button>
+                        <button class="btn btn-outline-info" onclick="scheduleConsultation()">
+                            <i class="fas fa-calendar-plus me-2"></i>Schedule Consultation
+                        </button>
+                        <button class="btn btn-outline-warning" onclick="openFacilityFinder()">
+                            <i class="fas fa-map-marker-alt me-2"></i>Find Nearby Providers
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Session History -->
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0" id="sessionHistory">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Your Sessions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if telemedicine_sessions %}
+                        {% for session in telemedicine_sessions %}
+                        <div class="card mb-3 border-start border-4 border-{{ 'success' if session.status == 'completed' else 'primary' if session.status == 'active' else 'warning' }}">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="card-title">{{ session.session_type.title() }} Session</h6>
+                                        {% if session.provider_name %}
+                                        <p class="text-muted small mb-1">Provider: {{ session.provider_name }}</p>
+                                        {% endif %}
+                                        <p class="text-muted small">{{ session.session_notes[:100] }}...</p>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-{{ 'success' if session.status == 'completed' else 'primary' if session.status == 'active' else 'warning' }}">
+                                            {{ session.status.title() }}
+                                        </span>
+                                        <div class="small text-muted mt-1">
+                                            {{ session.created_at.strftime('%Y-%m-%d %H:%M') if session.created_at else 'No date available' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-video fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No sessions yet</h5>
+                            <p class="text-muted">Start with our AI assistant or schedule a consultation</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Support Chat Modal -->
+    <div class="modal fade" id="aiSupportModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-robot me-2"></i>AI Health Support
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="chat-container" style="height: 400px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 1rem; background-color: #f8f9fa;">
+                        <div class="chat-message ai-message mb-3">
+                            <div class="d-flex align-items-start">
+                                <div class="avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; flex-shrink: 0;">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-content bg-white p-3 rounded shadow-sm">
+                                    <p class="mb-0">Hello! I'm your AI Medical Assistant. I can help you with:</p>
+                                    <ul class="mb-0 mt-2">
+                                        <li>Understanding your health assessment results</li>
+                                        <li>Explaining medical terms and conditions</li>
+                                        <li>Providing general health guidance</li>
+                                        <li>Suggesting when to seek professional care</li>
+                                    </ul>
+                                    <p class="small text-muted mt-2 mb-0">What would you like to know about your health?</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input mt-3">
+                        <form id="supportChatForm">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="supportMessage" placeholder="Ask about your health results, symptoms, or general health questions..." required>
+                                <button class="btn btn-success" type="submit">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Chat Modal -->
+    <div class="modal fade" id="emergencyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-ambulance me-2"></i>Emergency Support
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Immediate Emergency</h6>
+                        <p class="mb-2">If you're experiencing a life-threatening emergency:</p>
+                        <h4 class="text-center mb-3">📞 Call 112 Now</h4>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Crisis Support</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Police:</strong> 100</li>
+                                <li><strong>Ambulance:</strong> 102</li>
+                                <li><strong>Fire Services:</strong> 101</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Emergency Signs</h6>
+                            <ul class="small">
+                                <li>Severe chest pain</li>
+                                <li>Difficulty breathing</li>
+                                <li>Severe bleeding</li>
+                                <li>Loss of consciousness</li>
+                                <li>Thoughts of self-harm</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="{{ url_for('health.services') }}" class="btn btn-primary">Find Emergency Room</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Consultation Scheduling Modal -->
+    <div class="modal fade" id="consultationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-calendar-plus me-2"></i>Schedule Consultation
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="consultationForm" method="POST" action="{{ url_for('health.schedule_consultation') }}">
+                        <div class="mb-3">
+                            <label for="consultation_type" class="form-label">Consultation Type</label>
+                            <select class="form-select" id="consultation_type" name="consultation_type" required>
+                                <option value="">Select consultation type</option>
+                                <option value="general">General Health</option>
+                                <option value="mental_health">Mental Health</option>
+                                <option value="nutrition">Nutrition Counseling</option>
+                                <option value="chronic_care">Chronic Care Management</option>
+                                <option value="preventive">Preventive Care</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="preferred_date" class="form-label">Preferred Date</label>
+                            <input type="date" class="form-control" id="preferred_date" name="preferred_date" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="preferred_time" class="form-label">Preferred Time</label>
+                            <select class="form-select" id="preferred_time" name="preferred_time" required>
+                                <option value="">Select time</option>
+                                <option value="morning">Morning (9 AM - 12 PM)</option>
+                                <option value="afternoon">Afternoon (1 PM - 5 PM)</option>
+                                <option value="evening">Evening (6 PM - 8 PM)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="consultation_notes" class="form-label">Notes (optional)</label>
+                            <textarea class="form-control" id="consultation_notes" name="consultation_notes" rows="3" placeholder="Brief description of your concerns or questions..."></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="contact_preference" class="form-label">Contact Method</label>
+                            <select class="form-select" id="contact_preference" name="contact_preference" required>
+                                <option value="">How would you like to be contacted?</option>
+                                <option value="phone">Phone Call</option>
+                                <option value="video">Video Call</option>
+                                <option value="in_person">In-Person Visit</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="consultationForm" class="btn btn-info">
+                        <i class="fas fa-calendar-check me-2"></i>Schedule Consultation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+function openAIHealthSupport() {
+    const modal = new bootstrap.Modal(document.getElementById('aiSupportModal'));
+    modal.show();
+}
+
+function startEmergencyChat() {
+    const modal = new bootstrap.Modal(document.getElementById('emergencyModal'));
+    modal.show();
+}
+
+function scheduleConsultation() {
+    // Set minimum date to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('preferred_date').min = tomorrow.toISOString().split('T')[0];
+    
+    const modal = new bootstrap.Modal(document.getElementById('consultationModal'));
+    modal.show();
+}
+
+function openFacilityFinder() {
+    window.location.href = "{{ url_for('health.services') }}";
+}
+
+// AI Support Chat functionality
+document.getElementById('supportChatForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const messageInput = document.getElementById('supportMessage');
+    const message = messageInput.value.trim();
+    
+    if (message) {
+        addMessageToChat(message, 'user');
+        messageInput.value = '';
+        
+        // Send to AI (using existing chat endpoint)
+        fetch('/health/api/health-chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                message: message,
+                type: 'general'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                addMessageToChat(data.response, 'ai');
+            } else {
+                addMessageToChat('Sorry, I encountered an error. Please try again.', 'ai');
+            }
+        })
+        .catch(error => {
+            addMessageToChat('Connection error. Please check your internet and try again.', 'ai');
+        });
+    }
+});
+
+function addMessageToChat(message, sender) {
+    const chatContainer = document.querySelector('.chat-container');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${sender}-message mb-3`;
+    
+    if (sender === 'user') {
+        messageDiv.innerHTML = `
+            <div class="d-flex align-items-start justify-content-end">
+                <div class="message-content bg-primary text-white p-3 rounded shadow-sm me-2" style="max-width: 70%;">
+                    <p class="mb-0">${message}</p>
+                </div>
+                <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; flex-shrink: 0;">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        `;
+    } else {
+        messageDiv.innerHTML = `
+            <div class="d-flex align-items-start">
+                <div class="avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; flex-shrink: 0;">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content bg-white p-3 rounded shadow-sm" style="max-width: 70%;">
+                    <p class="mb-0">${message}</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+</script>
+{% endblock %}

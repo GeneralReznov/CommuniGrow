@@ -1,0 +1,428 @@
+{% extends "base.html" %}
+
+{% block title %}Agricultural Schemes - Food & Nutrition{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="display-4 mb-3">
+                🏛️ <i class="fas fa-university me-3"></i>
+                Government Agricultural Schemes
+            </h1>
+            <p class="lead">Find relevant agricultural schemes, subsidies, and support programs</p>
+            <button class="btn btn-outline-primary" onclick="speakText('Government agricultural schemes finder. Search for farming subsidies, crop insurance, equipment support, and other government programs available for farmers.')">
+                <i class="fas fa-volume-up me-2"></i>
+                Schemes Guide
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Quick Search Section -->
+            <div class="card quick-search-card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-rocket me-2"></i>
+                        Popular Agricultural Schemes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-success btn-sm w-100" onclick="searchScheme('PM-KISAN scheme direct cash benefits')">
+                                <i class="fas fa-rupee-sign me-2"></i>PM-KISAN
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-info btn-sm w-100" onclick="searchScheme('Crop insurance PMFBY benefits')">
+                                <i class="fas fa-shield-alt me-2"></i>Crop Insurance
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-warning btn-sm w-100" onclick="searchScheme('Kisan Credit Card loan benefits')">
+                                <i class="fas fa-credit-card me-2"></i>KCC Loan
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="searchScheme('Agricultural equipment subsidies tractors')">
+                                <i class="fas fa-tractor me-2"></i>Equipment Subsidy
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-success btn-sm w-100" onclick="searchScheme('Organic farming certification support')">
+                                <i class="fas fa-leaf me-2"></i>Organic Farming
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-danger btn-sm w-100" onclick="searchScheme('Solar pump subsidy renewable energy')">
+                                <i class="fas fa-solar-panel me-2"></i>Solar Subsidy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Form -->
+            <div class="card schemes-search-card">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="schemes-icon">
+                            <i class="fas fa-search fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="mt-3 text-primary">Find Agricultural Schemes</h4>
+                        <p class="text-muted">Search for government programs and subsidies using AI-powered search</p>
+                    </div>
+
+                    <form id="schemesSearchForm">
+                        <div class="mb-3">
+                            <label for="language" class="form-label fw-bold">Response Language:</label>
+                            <select class="form-select" id="language" name="language" required>
+                                <option value="English">English</option>
+                                <option value="Hindi">Hindi (हिंदी)</option>
+                                <option value="Bengali">Bengali (বাংলা)</option>
+                                <option value="Tamil">Tamil (தமிழ்)</option>
+                                <option value="Telugu">Telugu (తెలుగు)</option>
+                                <option value="Marathi">Marathi (मराठी)</option>
+                                <option value="Gujarati">Gujarati (ગુજરાતી)</option>
+                                <option value="Punjabi">Punjabi (ਪੰਜਾਬੀ)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="search-input-group mb-3">
+                                    <i class="fas fa-seedling"></i>
+                                    <select class="form-control" id="farmingType" name="farming_type">
+                                        <option value="">Select Farming Type</option>
+                                        <option value="crop-cultivation">Crop Cultivation</option>
+                                        <option value="dairy-farming">Dairy Farming</option>
+                                        <option value="poultry">Poultry Farming</option>
+                                        <option value="horticulture">Horticulture</option>
+                                        <option value="organic-farming">Organic Farming</option>
+                                        <option value="small-scale">Small Scale Farming</option>
+                                        <option value="large-scale">Large Scale Farming</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="search-input-group mb-3">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <input type="text" class="form-control" id="location" name="location" 
+                                           placeholder="Your State/District (e.g., Punjab, Maharashtra)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="search-input-group">
+                                <i class="fas fa-question-circle"></i>
+                                <textarea class="form-control" id="query" name="query" rows="3" 
+                                         placeholder="Describe what you're looking for (e.g., 'I need financial support for buying agricultural equipment' or 'Looking for crop insurance schemes')" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-schemes btn-lg px-5">
+                                <i class="fas fa-search me-2"></i>
+                                Find Relevant Schemes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="schemesResults" class="card mt-4" style="display: none;">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">
+                        <i class="fas fa-list me-2"></i>
+                        Relevant Government Schemes
+                    </h5>
+                    <div id="schemesContent" class="schemes-result">
+                        <!-- Results will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="text-center py-5" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3">Searching for relevant schemes...</p>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Scheme Categories -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-tags me-2"></i>
+                        Scheme Categories
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="scheme-categories">
+                        <div class="category-item mb-3">
+                            <i class="fas fa-money-bill-wave text-success me-2"></i>
+                            <strong>Financial Support</strong>
+                            <p class="small text-muted mb-0">Direct cash transfers, loans, credit facilities</p>
+                        </div>
+                        <div class="category-item mb-3">
+                            <i class="fas fa-shield-alt text-info me-2"></i>
+                            <strong>Insurance Schemes</strong>
+                            <p class="small text-muted mb-0">Crop insurance, livestock insurance</p>
+                        </div>
+                        <div class="category-item mb-3">
+                            <i class="fas fa-tools text-warning me-2"></i>
+                            <strong>Equipment Subsidies</strong>
+                            <p class="small text-muted mb-0">Tractors, implements, machinery</p>
+                        </div>
+                        <div class="category-item mb-3">
+                            <i class="fas fa-graduation-cap text-primary me-2"></i>
+                            <strong>Training & Education</strong>
+                            <p class="small text-muted mb-0">Skill development, extension services</p>
+                        </div>
+                        <div class="category-item mb-3">
+                            <i class="fas fa-leaf text-success me-2"></i>
+                            <strong>Sustainability</strong>
+                            <p class="small text-muted mb-0">Organic farming, climate resilience</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Application Tips -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Application Tips
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="application-tips">
+                        <div class="tip-item mb-3">
+                            <i class="fas fa-file-alt text-primary me-2"></i>
+                            <strong>Document Preparation</strong>
+                            <p class="small">Keep land records, Aadhaar, bank details ready</p>
+                        </div>
+                        <div class="tip-item mb-3">
+                            <i class="fas fa-calendar-check text-success me-2"></i>
+                            <strong>Timing Matters</strong>
+                            <p class="small">Apply during enrollment periods for better chances</p>
+                        </div>
+                        <div class="tip-item mb-3">
+                            <i class="fas fa-users text-info me-2"></i>
+                            <strong>Local Support</strong>
+                            <p class="small">Contact village officers or agriculture extension workers</p>
+                        </div>
+                        <div class="tip-item">
+                            <i class="fas fa-phone text-warning me-2"></i>
+                            <strong>Follow Up</strong>
+                            <p class="small">Track application status regularly</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.quick-search-card, .schemes-search-card {
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border: none;
+}
+
+.schemes-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #007bff, #6c757d);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin: 0 auto;
+}
+
+.search-input-group {
+    position: relative;
+}
+
+.search-input-group i {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    color: #007bff;
+    z-index: 10;
+}
+
+.search-input-group input,
+.search-input-group select,
+.search-input-group textarea {
+    padding-left: 45px;
+    border: 2px solid #e3f2fd;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.search-input-group input:focus,
+.search-input-group select:focus,
+.search-input-group textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn-schemes {
+    background: linear-gradient(135deg, #007bff, #6c757d);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.btn-schemes:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+    color: white;
+}
+
+.schemes-result {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 15px;
+    padding: 25px;
+    border-left: 5px solid #007bff;
+    color: #333;
+}
+
+.schemes-result * {
+    color: #333;
+}
+
+.category-item {
+    padding: 10px;
+    border-left: 3px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.category-item:hover {
+    border-left-color: #007bff;
+    background: rgba(0, 123, 255, 0.05);
+}
+
+.tip-item {
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 3px solid #007bff;
+}
+
+.scheme-suggestion {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin: 5px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    text-align: left;
+}
+
+.scheme-suggestion:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('schemesSearchForm');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const resultsDiv = document.getElementById('schemesResults');
+    const schemesContent = document.getElementById('schemesContent');
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Show loading
+        loadingSpinner.style.display = 'block';
+        resultsDiv.style.display = 'none';
+        
+        // Get form data
+        const formData = new FormData(form);
+        const searchData = Object.fromEntries(formData.entries());
+        
+        // Send request
+        fetch('/food/api/government-schemes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(searchData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingSpinner.style.display = 'none';
+            
+            if (data.success) {
+                displaySchemesResults(data.schemes);
+                resultsDiv.style.display = 'block';
+                resultsDiv.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert('Error finding schemes: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            loadingSpinner.style.display = 'none';
+            console.error('Error:', error);
+            alert('Failed to search schemes. Please try again.');
+        });
+    });
+});
+
+function displaySchemesResults(schemes) {
+    const schemesContent = document.getElementById('schemesContent');
+    
+    const formattedSchemes = formatSchemesText(schemes.recommendations || schemes);
+    
+    schemesContent.innerHTML = `
+        <div class="mb-4">
+            <h6 class="text-primary border-bottom pb-2">
+                <i class="fas fa-list-ul me-2"></i>
+                Government Schemes & Programs
+            </h6>
+            <div style="white-space: pre-wrap; line-height: 1.6; font-size: 0.95rem;">
+                ${formattedSchemes}
+            </div>
+        </div>
+        
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Next Steps:</strong> Contact your local agriculture department or visit the nearest Common Service Center (CSC) for application assistance.
+        </div>
+    `;
+}
+
+function formatSchemesText(text) {
+    return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/\n/g, '<br>');
+}
+
+function searchScheme(query) {
+    document.getElementById('query').value = query;
+    document.getElementById('schemesSearchForm').dispatchEvent(new Event('submit'));
+}
+</script>
+{% endblock %}

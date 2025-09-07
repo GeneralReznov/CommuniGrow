@@ -1,0 +1,780 @@
+{% extends "base.html" %}
+
+{% block title %}Health & Well-being - Community Platform{% endblock %}
+
+{% block content %}
+<!-- Futuristic Health Header -->
+<section class="futuristic-hero health-theme">
+    <div class="container">
+        <div class="hero-content" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="hero-title-small">
+                        <i class="fas fa-heartbeat me-2 module-icon-animated"></i>
+                        Health & Well-being Support
+                    </h1>
+                    <p class="hero-subtitle-small" data-aos="fade-up" data-aos-delay="300">
+                        Advanced AI health guidance, intelligent service mapping, and comprehensive community wellness resources.
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end" data-aos="fade-left" data-aos-delay="600">
+                    <button class="btn btn-futuristic-health" onclick="speakText('Health and Well-being module. Access intelligent AI health chatbot, find local health services, take comprehensive health assessments, and get emergency health information with AI assistance.')">
+                        <i class="fas fa-volume-up me-2"></i>Voice Guide
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Floating Health Elements -->
+    <div class="floating-element" style="top: 20%; left: 10%; animation-delay: 0s;">
+        <i class="fas fa-stethoscope fa-2x text-danger-light"></i>
+    </div>
+    <div class="floating-element" style="top: 30%; right: 15%; animation-delay: 2s;">
+        <i class="fas fa-heartbeat fa-2x text-danger"></i>
+    </div>
+    <div class="floating-element" style="bottom: 30%; left: 15%; animation-delay: 1s;">
+        <i class="fas fa-user-md fa-2x text-danger-dark"></i>
+    </div>
+</section>
+
+<div class="container py-5">
+    <!-- Quick Actions -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="feature-card-futuristic health-card" data-aos="fade-up">
+                <div class="action-icon bg-primary">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h6>AI Health Chat</h6>
+                <p class="small text-muted">Get immediate health guidance and symptom advice</p>
+                <a href="{{ url_for('health.chatbot') }}" class="btn btn-outline-primary btn-sm">
+                    Start Chat
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic health-card" data-aos="fade-up">
+                <div class="action-icon bg-info">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h6>Mental Health</h6>
+                <p class="small text-muted">Depression, anxiety & stress assessments</p>
+                <a href="{{ url_for('health.mental_health') }}" class="btn btn-outline-info btn-sm">
+                    Screening
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic health-card" data-aos="fade-up">
+                <div class="action-icon bg-purple">
+                    <i class="fas fa-bed"></i>
+                </div>
+                <h6>Sleep Wellness</h6>
+                <p class="small text-muted">Track sleep patterns & get AI insights</p>
+                <a href="{{ url_for('health.sleep_wellness') }}" class="btn btn-outline-secondary btn-sm">
+                    Track Sleep
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic health-card" data-aos="fade-up">
+                <div class="action-icon bg-success">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h6>Telemedicine</h6>
+                <p class="small text-muted">Connect with healthcare professionals</p>
+                <a href="{{ url_for('health.telemedicine') }}" class="btn btn-outline-success btn-sm">
+                    Connect
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Services -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="feature-card-futuristic health-card" data-aos="fade-up">
+                <div class="action-icon bg-warning">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h6>Find Services</h6>
+                <p class="small text-muted">Locate nearby health clinics and services</p>
+                <a href="{{ url_for('health.services') }}" class="btn btn-outline-warning btn-sm">
+                    View Map
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic health-card" data-aos="fade-up">
+                <div class="action-icon bg-secondary">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h6>Health Trends</h6>
+                <p class="small text-muted">View your health assessment history</p>
+                <a href="{{ url_for('health.mental_health') }}" class="btn btn-outline-secondary btn-sm">
+                    View History
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic health-card" data-aos="fade-up">
+                <div class="action-icon bg-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h6>Emergency Info</h6>
+                <p class="small text-muted">Critical health emergency information</p>
+                <button class="btn btn-outline-danger btn-sm" onclick="showEmergencyInfo()">
+                    View Info
+                </button>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic health-card" data-aos="fade-up">
+                <div class="action-icon bg-dark">
+                    <i class="fas fa-baby"></i>
+                </div>
+                <h6>Maternal Health</h6>
+                <p class="small text-muted">Prenatal, postnatal & child health resources</p>
+                <a href="{{ url_for('health.maternal_health') }}" class="btn btn-outline-dark btn-sm">
+                    Resources
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Health Assessments -->
+    {% if assessments %}
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-clipboard-check me-2"></i>
+                Health Self-Assessments
+            </h3>
+        </div>
+        
+        {% for assessment_key, assessment in assessments.items() %}
+        <div class="col-lg-4">
+            <div class="assessment-card">
+                <div class="assessment-header">
+                    <div class="assessment-icon bg-{{ 'danger' if 'mental' in assessment_key else 'primary' if 'physical' in assessment_key else 'success' }}">
+                        <i class="fas fa-{{ 'brain' if 'mental' in assessment_key else 'heartbeat' if 'physical' in assessment_key else 'apple-alt' }}"></i>
+                    </div>
+                    <div class="assessment-info">
+                        <h6>{{ assessment.title }}</h6>
+                        <p class="text-muted mb-0">{{ assessment.questions|length }} questions</p>
+                    </div>
+                </div>
+                <div class="assessment-content">
+                    <p class="small mb-3">{{ assessment.scoring }}</p>
+                    <div class="sample-questions">
+                        <h6 class="small fw-bold">Sample Questions:</h6>
+                        <ul class="small list-unstyled">
+                            {% for question in assessment.questions[:2] %}
+                            <li class="mb-1">
+                                <i class="fas fa-question-circle text-muted me-2"></i>
+                                {{ question }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="assessment-footer">
+                    <button class="btn btn-outline-primary btn-sm" onclick="startAssessment('{{ assessment_key }}', '{{ assessment.title }}')">
+                        <i class="fas fa-play me-1"></i>
+                        Start Assessment
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Emergency Information -->
+    {% if emergency_info %}
+    <div class="row g-4 mb-5" id="emergency-section">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-exclamation-triangle me-2 text-danger"></i>
+                Emergency Health Information
+            </h3>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="emergency-card">
+                <div class="emergency-header bg-danger text-white">
+                    <h6>
+                        <i class="fas fa-phone-alt me-2"></i>
+                        Emergency Contacts
+                    </h6>
+                </div>
+                <div class="emergency-content">
+                    <div class="emergency-numbers">
+                        <div class="number-item">
+                            <strong>Emergency Services:</strong> <span class="text-danger fs-5">112</span>
+                        </div>
+                        <div class="number-item">
+                            <strong>Ambulance:</strong> <span class="text-warning">102</span>
+                        </div>
+                        <div class="number-item">
+                            <strong>Police:</strong> <span class="text-info">100</span>
+                        </div>
+                        <div class="number-item">
+                            <strong>Fire Services:</strong> <span class="text-success">101</span>
+                        </div>
+                        <div class="number-item">
+                            <strong>Women Helpline:</strong> <span class="text-purple">1091</span>
+                        </div>
+                        <div class="number-item">
+                            <strong>Child Helpline:</strong> <span class="text-primary">1098</span>
+                        </div>
+                        <div class="number-item">
+                            <strong>Mental Health:</strong> <span class="text-secondary">9152987821</span>
+                        </div>
+                        <div class="number-item">
+                            <strong>Poison Control:</strong> <span class="text-dark">1906</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="emergency-card">
+                <div class="emergency-header bg-warning text-dark">
+                    <h6>
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        When to Seek Help
+                    </h6>
+                </div>
+                <div class="emergency-content">
+                    <div class="warning-signs">
+                        <h6 class="small fw-bold text-danger">Call 112 Immediately:</h6>
+                        <ul class="small list-unstyled">
+                            {% for sign in emergency_info.warning_signs.seek_immediate_help %}
+                            <li class="mb-1">
+                                <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                                {{ sign }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        
+                        <h6 class="small fw-bold text-warning mt-3">Urgent Care Needed:</h6>
+                        <ul class="small list-unstyled">
+                            {% for sign in emergency_info.warning_signs.urgent_care_needed %}
+                            <li class="mb-1">
+                                <i class="fas fa-exclamation-circle text-warning me-2"></i>
+                                {{ sign }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Maternal Health Resources -->
+    {% if maternal_resources %}
+    <div class="row g-4 mb-5" id="maternal-section">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-baby me-2 text-pink"></i>
+                Maternal & Child Health
+            </h3>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="resource-card">
+                <div class="resource-header">
+                    <i class="fas fa-pregnant text-info fa-2x mb-3"></i>
+                    <h6>Prenatal Care</h6>
+                </div>
+                <div class="resource-content">
+                    <ul class="list-unstyled small">
+                        {% for item in maternal_resources.prenatal_care %}
+                        <li class="mb-2">
+                            <i class="fas fa-check text-info me-2"></i>
+                            {{ item }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="resource-footer">
+                    <button class="btn btn-outline-info btn-sm" onclick="getPregnancyInfo()">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="resource-card">
+                <div class="resource-header">
+                    <i class="fas fa-baby text-success fa-2x mb-3"></i>
+                    <h6>Postnatal Care</h6>
+                </div>
+                <div class="resource-content">
+                    <ul class="list-unstyled small">
+                        {% for item in maternal_resources.postnatal_care %}
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            {{ item }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="resource-footer">
+                    <button class="btn btn-outline-success btn-sm" onclick="getPostnatalInfo()">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="resource-card">
+                <div class="resource-header">
+                    <i class="fas fa-child text-warning fa-2x mb-3"></i>
+                    <h6>Child Health</h6>
+                </div>
+                <div class="resource-content">
+                    <ul class="list-unstyled small">
+                        {% for item in maternal_resources.child_health %}
+                        <li class="mb-2">
+                            <i class="fas fa-check text-warning me-2"></i>
+                            {{ item }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="resource-footer">
+                    <button class="btn btn-outline-warning btn-sm" onclick="getChildHealthInfo()">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Health Resources -->
+    <div class="row g-4">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-heart me-2"></i>
+                Community Health Resources
+            </h3>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="resource-card">
+                <div class="resource-header">
+                    <i class="fas fa-user-md text-primary fa-2x mb-3"></i>
+                    <h5>Preventive Care</h5>
+                </div>
+                <div class="resource-content">
+                    <p>Regular health screenings and preventive care help catch health issues early when they're most treatable.</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Annual health checkups</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Blood pressure monitoring</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Diabetes screening</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Cancer screenings</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Vaccination updates</li>
+                    </ul>
+                </div>
+                <div class="resource-footer">
+                    <a href="{{ url_for('health.services') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        Find Clinics
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="resource-card">
+                <div class="resource-header">
+                    <i class="fas fa-brain text-info fa-2x mb-3"></i>
+                    <h5>Mental Health</h5>
+                </div>
+                <div class="resource-content">
+                    <p>Mental health is just as important as physical health. Support and resources are available when you need them.</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Stress management techniques</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Community support groups</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Counseling services</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Crisis intervention</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Wellness activities</li>
+                    </ul>
+                </div>
+                <div class="resource-footer">
+                    <a href="{{ url_for('health.chatbot') }}?type=mental_health" class="btn btn-outline-info">
+                        <i class="fas fa-comments me-2"></i>
+                        Get Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Health Assessment Modal -->
+<div class="modal fade" id="assessmentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assessmentTitle">
+                    <i class="fas fa-clipboard-check me-2"></i>
+                    Health Assessment
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="assessmentContent">
+                <!-- Assessment content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="submitAssessment" style="display: none;">
+                    <i class="fas fa-check me-2"></i>
+                    Get Results
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showAssessments() {
+    document.querySelector('#assessments-section')?.scrollIntoView({ behavior: 'smooth' });
+    speakText('Health self-assessments help you monitor your well-being. Choose from mental health, physical health, or nutrition assessments.');
+}
+
+function showEmergencyInfo() {
+    document.querySelector('#emergency-section')?.scrollIntoView({ behavior: 'smooth' });
+    speakText('Emergency health information includes emergency contact numbers and warning signs that require immediate medical attention.');
+}
+
+function startAssessment(assessmentKey, assessmentTitle) {
+    document.getElementById('assessmentTitle').innerHTML = `
+        <i class="fas fa-clipboard-check me-2"></i>
+        ${assessmentTitle}
+    `;
+    
+    let assessmentContent = '';
+    
+    if (assessmentKey === 'mental_health') {
+        assessmentContent = createMentalHealthAssessment();
+    } else if (assessmentKey === 'physical_health') {
+        assessmentContent = createPhysicalHealthAssessment();
+    } else if (assessmentKey === 'nutrition') {
+        assessmentContent = createNutritionAssessment();
+    }
+    
+    document.getElementById('assessmentContent').innerHTML = assessmentContent;
+    document.getElementById('submitAssessment').style.display = 'inline-block';
+    document.getElementById('submitAssessment').onclick = () => submitAssessment(assessmentKey);
+    
+    const assessmentModal = new bootstrap.Modal(document.getElementById('assessmentModal'));
+    assessmentModal.show();
+    
+    speakText(`Starting ${assessmentTitle} assessment. Please answer the questions honestly to get the most accurate results.`);
+}
+
+function createMentalHealthAssessment() {
+    return `
+        <div class="assessment-form">
+            <p class="mb-4">This assessment helps identify signs of depression and anxiety. Please select how often you've experienced these feelings in the past 2 weeks.</p>
+            
+            <div class="question-group mb-4">
+                <h6>How often have you felt down, depressed, or hopeless?</h6>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q1" value="0" id="q1a">
+                    <label class="form-check-label" for="q1a">Not at all</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q1" value="1" id="q1b">
+                    <label class="form-check-label" for="q1b">Several days</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q1" value="2" id="q1c">
+                    <label class="form-check-label" for="q1c">More than half the days</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q1" value="3" id="q1d">
+                    <label class="form-check-label" for="q1d">Nearly every day</label>
+                </div>
+            </div>
+            
+            <div class="question-group mb-4">
+                <h6>How often have you had little interest or pleasure in doing things?</h6>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q2" value="0" id="q2a">
+                    <label class="form-check-label" for="q2a">Not at all</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q2" value="1" id="q2b">
+                    <label class="form-check-label" for="q2b">Several days</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q2" value="2" id="q2c">
+                    <label class="form-check-label" for="q2c">More than half the days</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q2" value="3" id="q2d">
+                    <label class="form-check-label" for="q2d">Nearly every day</label>
+                </div>
+            </div>
+            
+            <div class="question-group mb-4">
+                <h6>How would you rate your stress level?</h6>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q3" value="0" id="q3a">
+                    <label class="form-check-label" for="q3a">Very low</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q3" value="1" id="q3b">
+                    <label class="form-check-label" for="q3b">Low</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q3" value="2" id="q3c">
+                    <label class="form-check-label" for="q3c">Moderate</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q3" value="3" id="q3d">
+                    <label class="form-check-label" for="q3d">High</label>
+                </div>
+            </div>
+            
+            <div class="alert alert-info">
+                <small><strong>Note:</strong> This assessment is for informational purposes only and does not replace professional medical advice.</small>
+            </div>
+        </div>
+    `;
+}
+
+function createPhysicalHealthAssessment() {
+    return `
+        <div class="assessment-form">
+            <p class="mb-4">This assessment helps evaluate your physical health and activity levels.</p>
+            
+            <div class="question-group mb-4">
+                <h6>How often do you exercise per week?</h6>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="p1" value="0" id="p1a">
+                    <label class="form-check-label" for="p1a">Never</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="p1" value="1" id="p1b">
+                    <label class="form-check-label" for="p1b">1-2 times</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="p1" value="2" id="p1c">
+                    <label class="form-check-label" for="p1c">3-4 times</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="p1" value="3" id="p1d">
+                    <label class="form-check-label" for="p1d">5+ times</label>
+                </div>
+            </div>
+            
+            <div class="question-group mb-4">
+                <h6>How would you rate your energy level?</h6>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="p2" value="0" id="p2a">
+                    <label class="form-check-label" for="p2a">Very low</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="p2" value="1" id="p2b">
+                    <label class="form-check-label" for="p2b">Low</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="p2" value="2" id="p2c">
+                    <label class="form-check-label" for="p2c">Moderate</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="p2" value="3" id="p2d">
+                    <label class="form-check-label" for="p2d">High</label>
+                </div>
+            </div>
+            
+            <div class="alert alert-info">
+                <small><strong>Note:</strong> This assessment provides general wellness guidance and does not replace professional medical evaluation.</small>
+            </div>
+        </div>
+    `;
+}
+
+function createNutritionAssessment() {
+    return `
+        <div class="assessment-form">
+            <p class="mb-4">This assessment evaluates your nutrition habits and dietary patterns.</p>
+            
+            <div class="question-group mb-4">
+                <h6>How many servings of fruits and vegetables do you eat daily?</h6>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="n1" value="0" id="n1a">
+                    <label class="form-check-label" for="n1a">Less than 2</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="n1" value="1" id="n1b">
+                    <label class="form-check-label" for="n1b">2-3 servings</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="n1" value="2" id="n1c">
+                    <label class="form-check-label" for="n1c">4-5 servings</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="n1" value="3" id="n1d">
+                    <label class="form-check-label" for="n1d">6+ servings</label>
+                </div>
+            </div>
+            
+            <div class="question-group mb-4">
+                <h6>How much water do you drink daily?</h6>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="n2" value="0" id="n2a">
+                    <label class="form-check-label" for="n2a">Less than 4 cups</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="n2" value="1" id="n2b">
+                    <label class="form-check-label" for="n2b">4-6 cups</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="n2" value="2" id="n2c">
+                    <label class="form-check-label" for="n2c">6-8 cups</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="n2" value="3" id="n2d">
+                    <label class="form-check-label" for="n2d">8+ cups</label>
+                </div>
+            </div>
+            
+            <div class="alert alert-info">
+                <small><strong>Note:</strong> This assessment provides general nutrition guidance and does not replace professional dietary consultation.</small>
+            </div>
+        </div>
+    `;
+}
+
+function submitAssessment(assessmentKey) {
+    const formData = new FormData();
+    const radioInputs = document.querySelectorAll('input[type="radio"]:checked');
+    
+    if (radioInputs.length === 0) {
+        alert('Please answer at least one question before submitting.');
+        return;
+    }
+    
+    let totalScore = 0;
+    radioInputs.forEach(input => {
+        totalScore += parseInt(input.value);
+    });
+    
+    let resultMessage = '';
+    let recommendations = [];
+    
+    if (assessmentKey === 'mental_health') {
+        if (totalScore <= 3) {
+            resultMessage = 'Your mental health appears to be in good condition.';
+            recommendations = ['Continue current self-care practices', 'Stay connected with supportive people', 'Maintain regular exercise and sleep'];
+        } else if (totalScore <= 6) {
+            resultMessage = 'You may be experiencing some mental health challenges.';
+            recommendations = ['Consider speaking with a counselor or therapist', 'Practice stress management techniques', 'Reach out to trusted friends or family'];
+        } else {
+            resultMessage = 'Your responses suggest you may need professional mental health support.';
+            recommendations = ['Contact a mental health professional soon', 'Call crisis hotline if needed: 988', 'Avoid isolation and seek immediate support'];
+        }
+    } else if (assessmentKey === 'physical_health') {
+        if (totalScore >= 5) {
+            resultMessage = 'Your physical health habits are excellent!';
+            recommendations = ['Keep up the great work', 'Continue regular exercise routine', 'Maintain healthy lifestyle choices'];
+        } else if (totalScore >= 3) {
+            resultMessage = 'Your physical health is good with room for improvement.';
+            recommendations = ['Try to increase physical activity', 'Focus on consistent sleep schedule', 'Consider adding more movement to daily routine'];
+        } else {
+            resultMessage = 'Your physical health could benefit from some changes.';
+            recommendations = ['Start with small, achievable exercise goals', 'Consult with healthcare provider', 'Gradually increase activity level'];
+        }
+    } else if (assessmentKey === 'nutrition') {
+        if (totalScore >= 5) {
+            resultMessage = 'Your nutrition habits are excellent!';
+            recommendations = ['Continue eating a variety of healthy foods', 'Maintain good hydration habits', 'Keep up the balanced diet'];
+        } else if (totalScore >= 3) {
+            resultMessage = 'Your nutrition is good with some areas to improve.';
+            recommendations = ['Try to add more fruits and vegetables', 'Increase water intake', 'Consider meal planning for better nutrition'];
+        } else {
+            resultMessage = 'Your nutrition could use significant improvement.';
+            recommendations = ['Start by adding one extra serving of vegetables daily', 'Increase water intake gradually', 'Consider nutrition counseling'];
+        }
+    }
+    
+    document.getElementById('assessmentContent').innerHTML = `
+        <div class="assessment-results">
+            <div class="text-center mb-4">
+                <i class="fas fa-chart-pie fa-3x text-primary mb-3"></i>
+                <h5>Assessment Results</h5>
+            </div>
+            
+            <div class="alert alert-info">
+                <h6 class="alert-heading">Your Score: ${totalScore}</h6>
+                <p class="mb-0">${resultMessage}</p>
+            </div>
+            
+            <div class="recommendations">
+                <h6>Recommendations:</h6>
+                <ul class="list-unstyled">
+                    ${recommendations.map(rec => `
+                        <li class="mb-2">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            ${rec}
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+            
+            <div class="next-steps mt-4">
+                <h6>Next Steps:</h6>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('health.chatbot') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-comments me-1"></i>
+                        Talk to AI Health Bot
+                    </a>
+                    <a href="{{ url_for('health.services') }}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-map-marker-alt me-1"></i>
+                        Find Health Services
+                    </a>
+                </div>
+            </div>
+            
+            <div class="alert alert-warning mt-3">
+                <small><strong>Important:</strong> This assessment is for educational purposes only. Please consult healthcare professionals for medical advice.</small>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('submitAssessment').style.display = 'none';
+    
+    speakText(`Assessment complete. ${resultMessage} Check the recommendations for ways to improve your health.`);
+}
+
+function getPregnancyInfo() {
+    speakText('Prenatal care includes regular checkups, proper nutrition, exercise guidelines, and monitoring for complications. Consult with healthcare providers for personalized pregnancy care.');
+}
+
+function getPostnatalInfo() {
+    speakText('Postnatal care focuses on newborn health, breastfeeding support, postpartum recovery, and family planning. Mental health support is also important during this time.');
+}
+
+function getChildHealthInfo() {
+    speakText('Child health includes regular vaccinations, growth monitoring, nutrition guidance, and developmental milestone tracking. Early intervention services are available when needed.');
+}
+</script>
+{% endblock %}

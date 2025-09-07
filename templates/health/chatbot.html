@@ -1,0 +1,590 @@
+{% extends "base.html" %}
+
+{% block title %}Health Chatbot - Community Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">
+            <i class="fas fa-robot me-2"></i>
+            AI Health Assistant
+        </h1>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary" onclick="speakText('AI Health Assistant. Ask questions about symptoms, get health advice, and receive guidance on when to seek medical care. Always consult healthcare professionals for serious concerns.')">
+                <i class="fas fa-volume-up me-2"></i>
+                How to Use
+            </button>
+            <button class="btn btn-primary" onclick="startVoiceChat()">
+                <i class="fas fa-microphone me-2"></i>
+                Voice Chat
+            </button>
+        </div>
+    </div>
+
+    <!-- Chat Type Selection -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <button class="btn btn-outline-primary w-100 chat-type-btn active" onclick="setChatType('general')" data-type="general">
+                <i class="fas fa-comments me-2"></i>
+                General Health
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-outline-danger w-100 chat-type-btn" onclick="setChatType('symptoms')" data-type="symptoms">
+                <i class="fas fa-thermometer-half me-2"></i>
+                Symptoms
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-outline-info w-100 chat-type-btn" onclick="setChatType('mental_health')" data-type="mental_health">
+                <i class="fas fa-brain me-2"></i>
+                Mental Health
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-outline-success w-100 chat-type-btn" onclick="setChatType('nutrition')" data-type="nutrition">
+                <i class="fas fa-apple-alt me-2"></i>
+                Nutrition
+            </button>
+        </div>
+    </div>
+
+    <!-- Chat Interface -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="d-flex align-items-center">
+                        <div class="chat-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="chat-info">
+                            <h6 class="mb-0">Health Assistant</h6>
+                            <small class="text-muted" id="chatTypeLabel">General Health Support</small>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge bg-success">Online</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>Hello! I'm your AI Health Assistant. I can help you with health questions, symptom guidance, and wellness advice.</p>
+                            <p class="mb-0"><strong>Please note:</strong> I provide general information only. For emergencies, call 112. For serious symptoms, consult a healthcare professional.</p>
+                            <small class="message-time">Just now</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <form id="chatForm" onsubmit="sendMessage(event)">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="messageInput" placeholder="Type your health question..." autocomplete="off">
+                            <button type="button" class="btn btn-outline-secondary" id="voiceBtn" onclick="toggleVoiceInput()">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="chat-sidebar">
+                <!-- Health Tips -->
+                <div class="sidebar-section">
+                    <h6 class="sidebar-title">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Health Tips
+                    </h6>
+                    <div class="health-tips">
+                        <div class="tip-item" onclick="sendQuickMessage('Tell me about staying hydrated')">
+                            <i class="fas fa-tint text-info me-2"></i>
+                            <span>Stay hydrated throughout the day</span>
+                        </div>
+                        <div class="tip-item" onclick="sendQuickMessage('How much exercise do I need?')">
+                            <i class="fas fa-running text-success me-2"></i>
+                            <span>Get regular physical activity</span>
+                        </div>
+                        <div class="tip-item" onclick="sendQuickMessage('What are good sleep habits?')">
+                            <i class="fas fa-bed text-primary me-2"></i>
+                            <span>Maintain healthy sleep schedule</span>
+                        </div>
+                        <div class="tip-item" onclick="sendQuickMessage('How to manage stress?')">
+                            <i class="fas fa-heart text-danger me-2"></i>
+                            <span>Practice stress management</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Questions -->
+                <div class="sidebar-section">
+                    <h6 class="sidebar-title">
+                        <i class="fas fa-question-circle me-2"></i>
+                        Quick Questions
+                    </h6>
+                    <div class="quick-questions">
+                        <button class="btn btn-outline-secondary btn-sm mb-2 w-100" onclick="sendQuickMessage('I have a headache')">
+                            I have a headache
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm mb-2 w-100" onclick="sendQuickMessage('I feel anxious')">
+                            I feel anxious
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm mb-2 w-100" onclick="sendQuickMessage('I need nutrition advice')">
+                            Nutrition advice
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm mb-2 w-100" onclick="sendQuickMessage('When should I see a doctor?')">
+                            When to see doctor?
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Emergency Info -->
+                <div class="sidebar-section">
+                    <h6 class="sidebar-title text-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Emergency
+                    </h6>
+                    <div class="emergency-info">
+                        <div class="alert alert-danger">
+                            <p class="mb-2"><strong>Call 112 if you have:</strong></p>
+                            <ul class="small mb-2">
+                                <li>Severe chest pain</li>
+                                <li>Difficulty breathing</li>
+                                <li>Severe bleeding</li>
+                                <li>Loss of consciousness</li>
+                            </ul>
+                            <button class="btn btn-danger btn-sm" onclick="showEmergencyModal()">
+                                <i class="fas fa-phone me-1"></i>
+                                Emergency Contacts
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Symptom Details Modal -->
+<div class="modal fade" id="symptomModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-clipboard-list me-2"></i>
+                    Symptom Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="symptomForm">
+                    <div class="mb-3">
+                        <label for="symptoms" class="form-label">Describe your symptoms *</label>
+                        <textarea class="form-control" id="symptoms" rows="3" required placeholder="Please describe what you're experiencing..."></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="age" class="form-label">Age (optional)</label>
+                                <input type="number" class="form-control" id="age" min="1" max="120">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="gender" class="form-label">Gender (optional)</label>
+                                <select class="form-select" id="gender">
+                                    <option value="">Prefer not to say</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="duration" class="form-label">How long have you had these symptoms?</label>
+                        <select class="form-select" id="duration">
+                            <option value="">Select duration</option>
+                            <option value="less than 1 hour">Less than 1 hour</option>
+                            <option value="1-6 hours">1-6 hours</option>
+                            <option value="6-24 hours">6-24 hours</option>
+                            <option value="1-3 days">1-3 days</option>
+                            <option value="more than 3 days">More than 3 days</option>
+                        </select>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <small><strong>Disclaimer:</strong> This is for informational purposes only and does not replace professional medical advice.</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitSymptoms()">
+                    <i class="fas fa-search me-2"></i>
+                    Get Health Guidance
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Emergency Modal -->
+<div class="modal fade" id="emergencyModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Emergency Contacts
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="emergency-contacts">
+                    <div class="contact-item">
+                        <h6>Emergency Services</h6>
+                        <p class="fs-3 text-danger mb-1">112</p>
+                        <small class="text-muted">For life-threatening emergencies</small>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="contact-item">
+                        <h6>Police</h6>
+                        <p class="fs-5 text-info mb-1">100</p>
+                        <small class="text-muted">Police assistance and security</small>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="contact-item">
+                        <h6>Ambulance</h6>
+                        <p class="fs-5 text-warning mb-1">102</p>
+                        <small class="text-muted">Medical emergency services</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentChatType = 'general';
+let sessionId = generateSessionId();
+let isListening = false;
+
+function generateSessionId() {
+    return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+function setChatType(type) {
+    currentChatType = type;
+    
+    // Update button states
+    document.querySelectorAll('.chat-type-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-type="${type}"]`).classList.add('active');
+    
+    // Update chat type label
+    const labels = {
+        general: 'General Health Support',
+        symptoms: 'Symptom Analysis',
+        mental_health: 'Mental Health Support',
+        nutrition: 'Nutrition Guidance'
+    };
+    
+    document.getElementById('chatTypeLabel').textContent = labels[type];
+    
+    // Add system message about chat type change
+    if (type === 'symptoms') {
+        addBotMessage('I can help analyze your symptoms. Please describe what you\'re experiencing, but remember to seek immediate medical attention for severe symptoms.');
+    } else if (type === 'mental_health') {
+        addBotMessage('I\'m here to provide mental health support and resources. If you\'re in crisis, please call 112 for immediate help.');
+    } else if (type === 'nutrition') {
+        addBotMessage('I can provide nutrition guidance and healthy eating advice. Tell me about your dietary goals or questions.');
+    } else {
+        addBotMessage('I\'m ready to help with your general health questions. What would you like to know?');
+    }
+    
+    speakText(`Switched to ${labels[type]} mode.`);
+}
+
+function sendMessage(event) {
+    event.preventDefault();
+    
+    const input = document.getElementById('messageInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message
+    addUserMessage(message);
+    input.value = '';
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Send to health chatbot API
+    sendToHealthBot(message);
+}
+
+function sendQuickMessage(message) {
+    document.getElementById('messageInput').value = message;
+    sendMessage({ preventDefault: () => {} });
+}
+
+function addUserMessage(message) {
+    const messagesContainer = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message user-message';
+    messageDiv.innerHTML = `
+        <div class="message-content">
+            <p class="mb-0">${escapeHtml(message)}</p>
+            <small class="message-time">${new Date().toLocaleTimeString()}</small>
+        </div>
+        <div class="message-avatar">
+            <i class="fas fa-user"></i>
+        </div>
+    `;
+    messagesContainer.appendChild(messageDiv);
+    scrollToBottom();
+}
+
+function addBotMessage(message) {
+    const messagesContainer = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message bot-message';
+    messageDiv.innerHTML = `
+        <div class="message-avatar">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="message-content">
+            <p class="mb-0">${escapeHtml(message)}</p>
+            <small class="message-time">${new Date().toLocaleTimeString()}</small>
+        </div>
+    `;
+    messagesContainer.appendChild(messageDiv);
+    scrollToBottom();
+    
+    // Speak the bot message
+    speakText(message);
+}
+
+function showTypingIndicator() {
+    const messagesContainer = document.getElementById('chatMessages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message bot-message typing-indicator';
+    typingDiv.id = 'typingIndicator';
+    typingDiv.innerHTML = `
+        <div class="message-avatar">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="message-content">
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <small class="message-time">Typing...</small>
+        </div>
+    `;
+    messagesContainer.appendChild(typingDiv);
+    scrollToBottom();
+}
+
+function removeTypingIndicator() {
+    const typingIndicator = document.getElementById('typingIndicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
+}
+
+function sendToHealthBot(message) {
+    const requestData = {
+        message: message,
+        session_id: sessionId,
+        type: currentChatType
+    };
+    
+    // Add demographic info if available for symptom analysis
+    if (currentChatType === 'symptoms') {
+        // For now, we'll send the message directly
+        // In a real implementation, we might want to collect this info first
+    }
+    
+    fetch('/health/api/health-chat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        removeTypingIndicator();
+        
+        if (data.success) {
+            addBotMessage(data.response);
+        } else {
+            addBotMessage('I apologize, but I\'m having trouble processing your request right now. Please try again or contact a healthcare professional if you have urgent concerns.');
+        }
+    })
+    .catch(error => {
+        removeTypingIndicator();
+        console.error('Health chat error:', error);
+        addBotMessage('I\'m experiencing technical difficulties. Please try again later or seek professional medical advice for urgent health concerns.');
+    });
+}
+
+function submitSymptoms() {
+    const symptoms = document.getElementById('symptoms').value;
+    const age = document.getElementById('age').value;
+    const gender = document.getElementById('gender').value;
+    const duration = document.getElementById('duration').value;
+    
+    if (!symptoms.trim()) {
+        alert('Please describe your symptoms.');
+        return;
+    }
+    
+    let message = symptoms;
+    if (duration) {
+        message += ` Duration: ${duration}.`;
+    }
+    
+    bootstrap.Modal.getInstance(document.getElementById('symptomModal')).hide();
+    
+    // Send symptom details
+    sendToHealthBot(message);
+}
+
+function startVoiceChat() {
+    toggleVoiceInput();
+}
+
+function toggleVoiceInput() {
+    const voiceBtn = document.getElementById('voiceBtn');
+    
+    if (!isListening) {
+        startListening();
+        voiceBtn.innerHTML = '<i class="fas fa-stop"></i>';
+        voiceBtn.classList.add('btn-danger');
+        voiceBtn.classList.remove('btn-outline-secondary');
+        isListening = true;
+        speakText('Listening for your health question...');
+    } else {
+        stopListening();
+        voiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+        voiceBtn.classList.remove('btn-danger');
+        voiceBtn.classList.add('btn-outline-secondary');
+        isListening = false;
+    }
+}
+
+function startListening() {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+        
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('messageInput').value = transcript;
+            stopListening();
+            sendMessage({ preventDefault: () => {} });
+        };
+        
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error:', event.error);
+            stopListening();
+            speakText('Sorry, I couldn\'t understand your speech. Please try typing your question.');
+        };
+        
+        recognition.onend = function() {
+            stopListening();
+        };
+        
+        recognition.start();
+        window.currentRecognition = recognition;
+    } else {
+        alert('Speech recognition is not supported in your browser.');
+    }
+}
+
+function stopListening() {
+    if (window.currentRecognition) {
+        window.currentRecognition.stop();
+    }
+    
+    const voiceBtn = document.getElementById('voiceBtn');
+    voiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+    voiceBtn.classList.remove('btn-danger');
+    voiceBtn.classList.add('btn-outline-secondary');
+    isListening = false;
+}
+
+function showEmergencyModal() {
+    const emergencyModal = new bootstrap.Modal(document.getElementById('emergencyModal'));
+    emergencyModal.show();
+    speakText('Emergency contacts: Call 112 for life-threatening emergencies, 100 for police, or 102 for ambulance services.');
+}
+
+function scrollToBottom() {
+    const messagesContainer = document.getElementById('chatMessages');
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Initialize chat
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if we should show symptom modal based on URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const chatType = urlParams.get('type');
+    
+    if (chatType && ['symptoms', 'mental_health', 'nutrition'].includes(chatType)) {
+        setChatType(chatType);
+    }
+    
+    // Focus on input
+    document.getElementById('messageInput').focus();
+    
+    // Add welcome message based on chat type
+    setTimeout(() => {
+        if (currentChatType === 'symptoms') {
+            addBotMessage('Would you like to provide detailed symptom information for better analysis?');
+        }
+    }, 1000);
+});
+
+// Handle Enter key in input
+document.getElementById('messageInput').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage(event);
+    }
+});
+</script>
+{% endblock %}

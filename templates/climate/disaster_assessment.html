@@ -1,0 +1,525 @@
+{% extends "base.html" %}
+
+{% block title %}Disaster Preparedness Assessment - Climate Action{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="futuristic-hero climate-theme">
+    <div class="container">
+        <div class="hero-content" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="hero-title-small">
+                        <i class="fas fa-shield-alt me-2 module-icon-animated"></i>
+                        Disaster Preparedness Assessment
+                    </h1>
+                    <p class="hero-subtitle-small" data-aos="fade-up" data-aos-delay="300">
+                        Evaluate your readiness for natural disasters and receive personalized AI-powered recommendations for your location in India.
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end" data-aos="fade-left" data-aos-delay="600">
+                    <button class="btn btn-futuristic-climate" onclick="speakText('Disaster preparedness assessment. Answer questions about your readiness for floods, hurricanes, earthquakes and other disasters. Get AI recommendations for your safety.')">
+                        <i class="fas fa-volume-up me-2"></i>Voice Guide
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container py-5">
+    <!-- Assessment Selection -->
+    <div class="row mb-5" id="disaster-selection">
+        <div class="col-12">
+            <div class="feature-card-futuristic">
+                <h3 class="mb-4">Select Disaster Type</h3>
+                <p class="mb-4">Choose the type of disaster you want to assess your preparedness for:</p>
+                
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <button class="btn btn-outline-primary w-100 disaster-btn" data-disaster="flood" onclick="startAssessment('flood')">
+                            <i class="fas fa-water fa-2x mb-2 d-block"></i>
+                            Flash Floods
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-outline-danger w-100 disaster-btn" data-disaster="cyclone" onclick="startAssessment('cyclone')">
+                            <i class="fas fa-hurricane fa-2x mb-2 d-block"></i>
+                            Cyclones
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-outline-warning w-100 disaster-btn" data-disaster="earthquake" onclick="startAssessment('earthquake')">
+                            <i class="fas fa-house-crack fa-2x mb-2 d-block"></i>
+                            Earthquakes
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-outline-success w-100 disaster-btn" data-disaster="drought" onclick="startAssessment('drought')">
+                            <i class="fas fa-sun fa-2x mb-2 d-block"></i>
+                            Droughts
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assessment Questions -->
+    <div class="row" id="assessment-container" style="display: none;">
+        <div class="col-lg-8">
+            <div class="feature-card-futuristic">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 id="assessment-title">Assessment Questions</h3>
+                    <div class="progress" style="width: 200px; height: 10px;">
+                        <div class="progress-bar bg-primary" id="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+
+                <div id="questions-container">
+                    <!-- Questions will be loaded here dynamically -->
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button class="btn btn-outline-secondary" id="prev-btn" onclick="previousQuestion()" disabled>
+                        <i class="fas fa-chevron-left me-2"></i>Previous
+                    </button>
+                    <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">
+                        Next<i class="fas fa-chevron-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="feature-card-futuristic">
+                <h5 class="mb-3">Assessment Progress</h5>
+                <div class="mb-3">
+                    <small class="text-muted">Current Disaster Type:</small>
+                    <div class="fw-bold" id="current-disaster">-</div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Questions Completed:</small>
+                    <div class="fw-bold" id="questions-progress">0 / 0</div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Location:</small>
+                    <input type="text" class="form-control form-control-sm" id="user-location" placeholder="Enter your city/state" value="Delhi, India">
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <small>Answer honestly to get the most accurate preparedness assessment and recommendations.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div class="row" id="results-container" style="display: none;">
+        <div class="col-12">
+            <div class="feature-card-futuristic">
+                <div class="text-center mb-4">
+                    <div class="display-1 mb-3" id="preparedness-score">0</div>
+                    <h3>Preparedness Score</h3>
+                    <div class="badge fs-6 mb-3" id="risk-level-badge">Medium Risk</div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                AI Recommendations
+                            </div>
+                            <div class="card-body">
+                                <ul id="recommendations-list" class="list-unstyled">
+                                    <!-- Recommendations will be loaded here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header bg-warning text-dark">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Immediate Actions
+                            </div>
+                            <div class="card-body">
+                                <ul id="immediate-actions-list" class="list-unstyled">
+                                    <!-- Immediate actions will be loaded here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mt-3">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <i class="fas fa-box me-2"></i>
+                                Emergency Supplies Needed
+                            </div>
+                            <div class="card-body">
+                                <ul id="supplies-list" class="list-unstyled">
+                                    <!-- Emergency supplies will be loaded here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary me-3" onclick="restartAssessment()">
+                        <i class="fas fa-redo me-2"></i>Take Another Assessment
+                    </button>
+                    <a href="{{ url_for('climate.index') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Climate Action
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentDisaster = '';
+let currentQuestionIndex = 0;
+let questions = [];
+let userResponses = {};
+let sessionId = 'assessment_' + Date.now();
+
+const disasterQuestions = {
+    flood: [
+        {
+            id: 'flood_supplies',
+            question: 'Do you have emergency supplies (water, food, first aid) stored above flood level?',
+            type: 'multiple',
+            options: ['Yes, well stocked', 'Some supplies', 'Very few supplies', 'No emergency supplies']
+        },
+        {
+            id: 'flood_evacuation',
+            question: 'Do you have an evacuation plan and route identified?',
+            type: 'multiple',
+            options: ['Yes, detailed plan practiced', 'Basic plan exists', 'Some idea of routes', 'No evacuation plan']
+        },
+        {
+            id: 'flood_communication',
+            question: 'How prepared are you to receive flood warnings?',
+            type: 'multiple',
+            options: ['Multiple alert systems', 'Radio/TV alerts', 'Mobile alerts only', 'No reliable warning system']
+        },
+        {
+            id: 'flood_insurance',
+            question: 'Do you have flood insurance or financial protection?',
+            type: 'multiple',
+            options: ['Full flood coverage', 'Partial coverage', 'Basic home insurance', 'No insurance']
+        },
+        {
+            id: 'flood_shelter',
+            question: 'Do you know where to find emergency shelter during floods?',
+            type: 'multiple',
+            options: ['Multiple known shelters', 'One identified shelter', 'Know general area', 'No shelter plan']
+        }
+    ],
+    cyclone: [
+        {
+            id: 'cyclone_structure',
+            question: 'How well can your home withstand high winds?',
+            type: 'multiple',
+            options: ['Reinforced concrete structure', 'Strong brick/concrete', 'Standard construction', 'Weak or temporary structure']
+        },
+        {
+            id: 'cyclone_shutters',
+            question: 'Do you have storm shutters or window protection?',
+            type: 'multiple',
+            options: ['Permanent storm shutters', 'Removable protection', 'Basic covering materials', 'No window protection']
+        },
+        {
+            id: 'cyclone_supplies',
+            question: 'Do you have emergency supplies for extended power outages?',
+            type: 'multiple',
+            options: ['7+ days of supplies', '3-7 days supplies', '1-3 days supplies', 'Less than 1 day']
+        },
+        {
+            id: 'cyclone_generator',
+            question: 'Do you have backup power sources?',
+            type: 'multiple',
+            options: ['Generator and UPS', 'Generator or solar backup', 'Battery backups only', 'No backup power']
+        },
+        {
+            id: 'cyclone_tracking',
+            question: 'How do you track cyclone warnings and updates?',
+            type: 'multiple',
+            options: ['Multiple weather sources', 'Weather radio/apps', 'TV/radio news', 'Word of mouth only']
+        }
+    ],
+    earthquake: [
+        {
+            id: 'earthquake_building',
+            question: 'Is your building earthquake-resistant or retrofitted?',
+            type: 'multiple',
+            options: ['Fully earthquake-resistant', 'Some retrofitting done', 'Standard construction', 'Old/unsafe building']
+        },
+        {
+            id: 'earthquake_furniture',
+            question: 'Are heavy furniture and appliances secured?',
+            type: 'multiple',
+            options: ['All items secured', 'Most items secured', 'Some items secured', 'Nothing secured']
+        },
+        {
+            id: 'earthquake_plan',
+            question: 'Do you know what to do during an earthquake?',
+            type: 'multiple',
+            options: ['Drop, cover, hold practiced', 'Know basic actions', 'Some knowledge', 'No earthquake knowledge']
+        },
+        {
+            id: 'earthquake_kit',
+            question: 'Do you have an earthquake emergency kit ready?',
+            type: 'multiple',
+            options: ['Complete 72-hour kit', 'Basic emergency kit', 'Some supplies', 'No emergency kit']
+        },
+        {
+            id: 'earthquake_meeting',
+            question: 'Do you have a family meeting point after earthquakes?',
+            type: 'multiple',
+            options: ['Multiple meeting points', 'One designated point', 'General agreement', 'No meeting plan']
+        }
+    ],
+    drought: [
+        {
+            id: 'drought_water_storage',
+            question: 'How much water do you have stored for emergencies?',
+            type: 'multiple',
+            options: ['30+ days supply', '7-30 days supply', '3-7 days supply', 'Less than 3 days']
+        },
+        {
+            id: 'drought_conservation',
+            question: 'Do you practice water conservation methods?',
+            type: 'multiple',
+            options: ['Multiple conservation systems', 'Some conservation methods', 'Basic water saving', 'No conservation efforts']
+        },
+        {
+            id: 'drought_crops',
+            question: 'If you grow food, do you use drought-resistant varieties?',
+            type: 'multiple',
+            options: ['All drought-resistant crops', 'Some resistant varieties', 'Traditional varieties only', 'No food growing']
+        },
+        {
+            id: 'drought_backup',
+            question: 'Do you have backup water sources identified?',
+            type: 'multiple',
+            options: ['Multiple backup sources', 'One backup source', 'Know of sources nearby', 'No backup plan']
+        },
+        {
+            id: 'drought_monitoring',
+            question: 'Do you monitor drought conditions and forecasts?',
+            type: 'multiple',
+            options: ['Regular monitoring', 'Occasional checking', 'Only during crisis', 'No monitoring']
+        }
+    ]
+};
+
+function startAssessment(disasterType) {
+    currentDisaster = disasterType;
+    questions = disasterQuestions[disasterType];
+    currentQuestionIndex = 0;
+    userResponses = {};
+    
+    document.getElementById('disaster-selection').style.display = 'none';
+    document.getElementById('assessment-container').style.display = 'block';
+    document.getElementById('current-disaster').textContent = disasterType.charAt(0).toUpperCase() + disasterType.slice(1);
+    
+    updateQuestionsProgress();
+    displayQuestion();
+    
+    speakText(`Starting ${disasterType} preparedness assessment. Please answer each question honestly to get accurate recommendations.`);
+}
+
+function displayQuestion() {
+    const question = questions[currentQuestionIndex];
+    const container = document.getElementById('questions-container');
+    
+    let html = `
+        <div class="question-card">
+            <h5 class="mb-3">Question ${currentQuestionIndex + 1} of ${questions.length}</h5>
+            <p class="lead mb-4">${question.question}</p>
+    `;
+    
+    if (question.type === 'multiple') {
+        html += '<div class="row g-2">';
+        question.options.forEach((option, index) => {
+            const isSelected = userResponses[question.id] === index;
+            html += `
+                <div class="col-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="question_${question.id}" 
+                               id="option_${index}" value="${index}" ${isSelected ? 'checked' : ''}
+                               onchange="saveResponse('${question.id}', ${index})">
+                        <label class="form-check-label" for="option_${index}">
+                            ${option}
+                        </label>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    
+    html += '</div>';
+    container.innerHTML = html;
+    
+    updateNavigationButtons();
+    updateProgress();
+}
+
+function saveResponse(questionId, value) {
+    userResponses[questionId] = value;
+    updateNavigationButtons();
+}
+
+function nextQuestion() {
+    if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        displayQuestion();
+    } else {
+        submitAssessment();
+    }
+}
+
+function previousQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        displayQuestion();
+    }
+}
+
+function updateNavigationButtons() {
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const currentQuestion = questions[currentQuestionIndex];
+    
+    prevBtn.disabled = currentQuestionIndex === 0;
+    
+    const hasAnswer = userResponses.hasOwnProperty(currentQuestion.id);
+    nextBtn.disabled = !hasAnswer;
+    
+    if (currentQuestionIndex === questions.length - 1) {
+        nextBtn.innerHTML = hasAnswer ? '<i class="fas fa-check me-2"></i>Complete Assessment' : 'Complete Assessment';
+        nextBtn.className = hasAnswer ? 'btn btn-success' : 'btn btn-secondary';
+    } else {
+        nextBtn.innerHTML = 'Next<i class="fas fa-chevron-right ms-2"></i>';
+        nextBtn.className = 'btn btn-primary';
+    }
+}
+
+function updateProgress() {
+    const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+    document.getElementById('progress-bar').style.width = progress + '%';
+    document.getElementById('progress-bar').setAttribute('aria-valuenow', progress);
+}
+
+function updateQuestionsProgress() {
+    const answered = Object.keys(userResponses).length;
+    const total = questions.length;
+    document.getElementById('questions-progress').textContent = `${answered} / ${total}`;
+}
+
+function submitAssessment() {
+    const location = document.getElementById('user-location').value || 'India';
+    
+    speakText('Processing your assessment. Please wait while AI analyzes your preparedness level.');
+    
+    // Show loading state
+    const nextBtn = document.getElementById('next-btn');
+    nextBtn.disabled = true;
+    nextBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+    
+    const payload = {
+        disaster_type: currentDisaster,
+        responses: userResponses,
+        location: location,
+        session_id: sessionId
+    };
+    
+    fetch('/climate/api/disaster-assessment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayResults(data.assessment);
+            speakText(`Assessment complete. Your preparedness score is ${data.assessment.score} out of 100. Review the recommendations for improving your safety.`);
+        } else {
+            throw new Error(data.error || 'Assessment failed');
+        }
+    })
+    .catch(error => {
+        console.error('Assessment error:', error);
+        alert('Failed to process assessment. Please try again.');
+        nextBtn.disabled = false;
+        nextBtn.innerHTML = '<i class="fas fa-check me-2"></i>Complete Assessment';
+    });
+}
+
+function displayResults(assessment) {
+    document.getElementById('assessment-container').style.display = 'none';
+    document.getElementById('results-container').style.display = 'block';
+    
+    // Score and risk level
+    document.getElementById('preparedness-score').textContent = assessment.score;
+    const riskBadge = document.getElementById('risk-level-badge');
+    riskBadge.textContent = assessment.risk_level.toUpperCase() + ' RISK';
+    
+    // Color coding for risk levels
+    riskBadge.className = 'badge fs-6 mb-3 ';
+    if (assessment.risk_level === 'low') {
+        riskBadge.className += 'bg-success';
+    } else if (assessment.risk_level === 'medium') {
+        riskBadge.className += 'bg-warning text-dark';
+    } else {
+        riskBadge.className += 'bg-danger';
+    }
+    
+    // Recommendations
+    const recList = document.getElementById('recommendations-list');
+    recList.innerHTML = assessment.recommendations.map(rec => 
+        `<li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i>${rec}</li>`
+    ).join('');
+    
+    // Immediate actions
+    const actionList = document.getElementById('immediate-actions-list');
+    actionList.innerHTML = assessment.immediate_actions.map(action => 
+        `<li class="mb-2"><i class="fas fa-exclamation-circle text-warning me-2"></i>${action}</li>`
+    ).join('');
+    
+    // Emergency supplies
+    const suppliesList = document.getElementById('supplies-list');
+    suppliesList.innerHTML = assessment.supplies_needed.map(supply => 
+        `<li class="mb-2"><i class="fas fa-box text-success me-2"></i>${supply}</li>`
+    ).join('');
+}
+
+function restartAssessment() {
+    document.getElementById('results-container').style.display = 'none';
+    document.getElementById('disaster-selection').style.display = 'block';
+    
+    // Reset state
+    currentDisaster = '';
+    currentQuestionIndex = 0;
+    questions = [];
+    userResponses = {};
+    sessionId = 'assessment_' + Date.now();
+    
+    speakText('Assessment reset. Choose a disaster type to begin a new assessment.');
+}
+</script>
+{% endblock %}

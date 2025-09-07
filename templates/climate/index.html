@@ -1,0 +1,521 @@
+{% extends "base.html" %}
+
+{% block title %}Climate Action - Community Platform{% endblock %}
+
+{% block content %}
+<!-- Futuristic Climate Header -->
+<section class="futuristic-hero climate-theme">
+    <div class="container">
+        <div class="hero-content" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="hero-title-small">
+                        <i class="fas fa-leaf me-2 module-icon-animated"></i>
+                        Climate Action & Sustainability
+                    </h1>
+                    <p class="hero-subtitle-small" data-aos="fade-up" data-aos-delay="300">
+                        Advanced weather monitoring, sustainable practices guidance, and AI-powered climate adaptation for resilient communities.
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end" data-aos="fade-left" data-aos-delay="600">
+                    <button class="btn btn-futuristic-climate" onclick="speakText('Climate Action module. Access real-time weather data, learn sustainable practices, and prepare for climate challenges with AI guidance. Use voice commands like show weather or sustainable farming.')">
+                        <i class="fas fa-volume-up me-2"></i>Voice Guide
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Floating Climate Elements -->
+    <div class="floating-element" style="top: 20%; left: 10%; animation-delay: 0s;">
+        <i class="fas fa-cloud-sun fa-2x text-success-light"></i>
+    </div>
+    <div class="floating-element" style="top: 30%; right: 15%; animation-delay: 2s;">
+        <i class="fas fa-seedling fa-2x text-success"></i>
+    </div>
+    <div class="floating-element" style="bottom: 30%; left: 15%; animation-delay: 1s;">
+        <i class="fas fa-recycle fa-2x text-success-dark"></i>
+    </div>
+</section>
+
+<div class="container py-5">
+    <!-- Current Weather & Alerts -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <div class="feature-card-futuristic climate-card h-100" data-aos="fade-right">
+                <div class="feature-icon-futuristic climate-icon">
+                    <i class="fas fa-cloud-sun"></i>
+                </div>
+                <h3>Weather & Climate Alerts</h3>
+                <div class="climate-card-content">
+                    <div id="weather-display">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary mb-3" role="status"></div>
+                            <p>Loading weather information...</p>
+                            <button class="btn btn-primary" onclick="requestLocationWeather()">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                Get Local Weather
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h6>Active Alerts</h6>
+                        <div id="active-alerts">
+                            <p class="text-muted">No active weather alerts for your area.</p>
+                        </div>
+                        <a href="{{ url_for('climate.alerts') }}" class="btn btn-outline-primary btn-sm">
+                            View All Alerts
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="feature-card-futuristic climate-card h-100" data-aos="fade-left" data-aos-delay="200">
+                <div class="feature-icon-futuristic climate-icon">
+                    <i class="fas fa-wifi"></i>
+                </div>
+                <h3>Environmental Sensors</h3>
+                <div class="climate-card-content">
+                    <div id="sensor-data">
+                        <p class="text-muted mb-3">Connect IoT sensors to monitor:</p>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-wind text-info me-2"></i>
+                                Air Quality
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-tint text-primary me-2"></i>
+                                Water Quality
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-solar-panel text-warning me-2"></i>
+                                Solar Energy Output
+                            </li>
+                        </ul>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="checkSensors()">
+                            <i class="fas fa-search me-2"></i>
+                            Detect Sensors
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sustainable Practices -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h3 class="mb-4">
+                <i class="fas fa-recycle me-2"></i>
+                Sustainable Practices
+            </h3>
+        </div>
+        
+        {% if practices %}
+        <!-- Farming Practices -->
+        <div class="col-lg-4">
+            <div class="practice-card">
+                <div class="practice-header bg-success">
+                    <i class="fas fa-seedling"></i>
+                    <h5>Sustainable Farming</h5>
+                </div>
+                <div class="practice-content">
+                    <ul class="list-unstyled">
+                        {% for practice in practices.farming %}
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            {{ practice }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Energy Practices -->
+        <div class="col-lg-4">
+            <div class="practice-card">
+                <div class="practice-header bg-warning">
+                    <i class="fas fa-bolt"></i>
+                    <h5>Energy Efficiency</h5>
+                </div>
+                <div class="practice-content">
+                    <ul class="list-unstyled">
+                        {% for practice in practices.energy %}
+                        <li class="mb-2">
+                            <i class="fas fa-check text-warning me-2"></i>
+                            {{ practice }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Water Practices -->
+        <div class="col-lg-4">
+            <div class="practice-card">
+                <div class="practice-header bg-info">
+                    <i class="fas fa-tint"></i>
+                    <h5>Water Conservation</h5>
+                </div>
+                <div class="practice-content">
+                    <ul class="list-unstyled">
+                        {% for practice in practices.water %}
+                        <li class="mb-2">
+                            <i class="fas fa-check text-info me-2"></i>
+                            {{ practice }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Default practices display -->
+        <div class="col-lg-4">
+            <div class="practice-card">
+                <div class="practice-header bg-success">
+                    <i class="fas fa-seedling"></i>
+                    <h5>Sustainable Farming</h5>
+                </div>
+                <div class="practice-content">
+                    <p>Learn techniques for sustainable agriculture adapted to your local climate.</p>
+                    <button class="btn btn-success btn-sm" onclick="showFarmingPractices()">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="practice-card">
+                <div class="practice-header bg-warning">
+                    <i class="fas fa-bolt"></i>
+                    <h5>Renewable Energy</h5>
+                </div>
+                <div class="practice-content">
+                    <p>Discover affordable renewable energy solutions for your community.</p>
+                    <button class="btn btn-warning btn-sm" onclick="showEnergyPractices()">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="practice-card">
+                <div class="practice-header bg-info">
+                    <i class="fas fa-tint"></i>
+                    <h5>Water Conservation</h5>
+                </div>
+                <div class="practice-content">
+                    <p>Implement water-saving techniques and harvesting systems.</p>
+                    <button class="btn btn-info btn-sm" onclick="showWaterPractices()">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Climate Adaptation Tools -->
+    <div class="row g-4">
+        <div class="col-12">
+            <h3 class="mb-4">
+                <i class="fas fa-shield-alt me-2"></i>
+                Climate Adaptation Tools
+            </h3>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="tool-card">
+                <div class="tool-icon">
+                    <i class="fas fa-exclamation-triangle text-danger"></i>
+                </div>
+                <div class="tool-content">
+                    <h6>Disaster Preparedness</h6>
+                    <p>Emergency planning, supply lists, and evacuation routes for climate-related disasters.</p>
+                    <a href="{{ url_for('climate.disaster_assessment') }}" class="btn btn-outline-danger btn-sm">
+                        <i class="fas fa-list me-2"></i>
+                        Start Assessment
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="tool-card">
+                <div class="tool-icon">
+                    <i class="fas fa-thermometer-half text-primary"></i>
+                </div>
+                <div class="tool-content">
+                    <h6>Climate Monitoring</h6>
+                    <p>Track local climate patterns and receive personalized adaptation recommendations.</p>
+                    <a href="{{ url_for('climate.climate_monitoring') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-chart-line me-2"></i>
+                        View Monitoring
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="quick-actions-card">
+                <h5 class="mb-3">
+                    <i class="fas fa-bolt me-2"></i>
+                    Quick Climate Actions
+                </h5>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="{{ url_for('climate.climate_monitoring') }}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-cloud me-2"></i>
+                            Current Weather
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('climate.sustainable_practices') }}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            Energy Tips
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('climate.disaster_assessment') }}" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            Disaster Prep
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('climate.alerts') }}" class="btn btn-outline-danger w-100">
+                            <i class="fas fa-bell me-2"></i>
+                            All Alerts
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-load weather if geolocation is available
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            loadWeatherForLocation(position.coords.latitude, position.coords.longitude);
+        });
+    }
+    
+    // Check for IoT sensors
+    checkSensors();
+});
+
+function requestLocationWeather() {
+    if (navigator.geolocation) {
+        speakText('Getting your location for local weather information...');
+        navigator.geolocation.getCurrentPosition(function(position) {
+            loadWeatherForLocation(position.coords.latitude, position.coords.longitude);
+        }, function() {
+            speakText('Unable to get your location. Please enter your city name.');
+            const city = prompt('Enter your city name for weather information:');
+            if (city) {
+                loadWeatherForCity(city);
+            }
+        });
+    } else {
+        const city = prompt('Enter your city name for weather information:');
+        if (city) {
+            loadWeatherForCity(city);
+        }
+    }
+}
+
+function loadWeatherForCity(city) {
+    fetch(`/climate/api/weather/${city}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayWeatherData(data.weather, data.advice);
+                speakText(`Current weather in ${city}: ${data.weather.weather[0].description}, ${Math.round(data.weather.main.temp)} degrees celsius.`);
+            } else {
+                document.getElementById('weather-display').innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Weather data unavailable for ${city}. Please try a different location.
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Weather error:', error);
+            document.getElementById('weather-display').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-times me-2"></i>
+                    Unable to load weather data. Please try again later.
+                </div>
+            `;
+        });
+}
+
+function loadWeatherForLocation(lat, lon) {
+    // Load weather for India (default city: Delhi)
+    loadWeatherForCity('Delhi');
+}
+
+function displayWeatherData(weather, advice) {
+    const temp = weather.temperature || '32°C';
+    const description = weather.conditions || 'Loading weather information...';
+    const humidity = weather.humidity || '65%';
+    const location = weather.location || 'India';
+    
+    document.getElementById('weather-display').innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <div class="weather-info">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="weather-icon me-3">
+                            <i class="fas fa-sun fa-3x text-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0">${temp}</h4>
+                            <p class="text-muted mb-0 text-capitalize">${description}</p>
+                            <small class="text-muted">${location}</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Humidity</small>
+                            <div class="fw-bold">${humidity}</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Region</small>
+                            <div class="fw-bold">India</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="climate-advice">
+                    <h6>AI Climate Recommendations</h6>
+                    ${Array.isArray(advice) ? 
+                        `<ul class="small">${advice.map(item => `<li>${item}</li>`).join('')}</ul>` : 
+                        `<p class="small">${advice}</p>`
+                    }
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function getWeatherIcon(condition) {
+    const icons = {
+        'Clear': 'sun',
+        'Clouds': 'cloud',
+        'Rain': 'cloud-rain',
+        'Snow': 'snowflake',
+        'Thunderstorm': 'bolt',
+        'Drizzle': 'cloud-drizzle',
+        'Mist': 'eye-slash'
+    };
+    return icons[condition] || 'cloud';
+}
+
+function checkSensors() {
+    fetch('/climate/api/iot-sensors')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.sensors_detected) {
+                displaySensorData(data.data);
+            } else {
+                document.getElementById('sensor-data').innerHTML = `
+                    <div class="text-center">
+                        <i class="fas fa-wifi-slash fa-2x text-muted mb-3"></i>
+                        <p class="text-muted">${data.data.message}</p>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="checkSensors()">
+                            <i class="fas fa-redo me-2"></i>
+                            Retry Detection
+                        </button>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Sensor error:', error);
+        });
+}
+
+function displaySensorData(data) {
+    document.getElementById('sensor-data').innerHTML = `
+        <div class="sensor-readings">
+            <div class="mb-3">
+                <div class="d-flex justify-content-between">
+                    <span>Air Quality</span>
+                    <span class="badge bg-success">${data.air_quality.status}</span>
+                </div>
+                <small class="text-muted">AQI: ${data.air_quality.aqi}</small>
+            </div>
+            <div class="mb-3">
+                <div class="d-flex justify-content-between">
+                    <span>Water Quality</span>
+                    <span class="badge bg-info">${data.water_quality.turbidity}</span>
+                </div>
+                <small class="text-muted">pH: ${data.water_quality.ph}</small>
+            </div>
+            <div class="mb-3">
+                <div class="d-flex justify-content-between">
+                    <span>Solar Output</span>
+                    <span class="badge bg-warning">${data.solar_energy.efficiency}</span>
+                </div>
+                <small class="text-muted">${data.solar_energy.output}</small>
+            </div>
+        </div>
+    `;
+}
+
+function showFarmingPractices() {
+    speakText('Sustainable farming practices include crop rotation, rainwater harvesting, composting, and using drought-resistant crops.');
+}
+
+function showEnergyPractices() {
+    speakText('Energy efficiency tips include using solar panels, LED lighting, proper insulation, and timing energy usage during off-peak hours.');
+}
+
+function showWaterPractices() {
+    speakText('Water conservation methods include rainwater collection, greywater recycling, drip irrigation, and protecting groundwater sources.');
+}
+
+function showDisasterPrep() {
+    const prepList = `Disaster preparedness checklist: Emergency food and water for 3 days, first aid kit, flashlight and batteries, important documents in waterproof container, evacuation route plan, emergency contact list, weather radio.`;
+    speakText(prepList);
+}
+
+function requestClimateAdvice() {
+    speakText('Analyzing local climate patterns to provide personalized adaptation recommendations...');
+    // This would normally make an API call to get climate advice
+    setTimeout(() => {
+        speakText('Based on your location, consider implementing water conservation measures and heat-resistant crops. Monitor weather alerts regularly.');
+    }, 2000);
+}
+
+function checkWeatherNow() {
+    requestLocationWeather();
+}
+
+function getEnergyTips() {
+    speakText('Energy saving tips: Use natural lighting during day, unplug devices when not in use, cook with lids on pots, air dry clothes instead of using dryer, and consider solar water heating.');
+}
+
+function reportEnvironmentalIssue() {
+    speakText('To report environmental issues, contact your local environmental agency or use the emergency contact if it\'s urgent.');
+}
+</script>
+{% endblock %}

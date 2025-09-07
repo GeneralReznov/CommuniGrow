@@ -1,0 +1,578 @@
+{% extends "base.html" %}
+
+{% block title %}Skills & Employment - Community Platform{% endblock %}
+
+{% block content %}
+<!-- Futuristic Skills Header -->
+<section class="futuristic-hero skills-theme">
+    <div class="container">
+        <div class="hero-content" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="hero-title-small">
+                        <i class="fas fa-graduation-cap me-2 module-icon-animated"></i>
+                        Skills & Employment Development
+                    </h1>
+                    <p class="hero-subtitle-small" data-aos="fade-up" data-aos-delay="300">
+                        AI-powered job matching, personalized skill development pathways, and comprehensive career advancement resources.
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end" data-aos="fade-left" data-aos-delay="600">
+                    <button class="btn btn-futuristic-skills" onclick="speakText('Skills and Employment module. Discover tailored job opportunities, accelerate skill development through AI-guided microlearning, and access comprehensive career resources. Use voice commands like find jobs or learn new skills.')">
+                        <i class="fas fa-volume-up me-2"></i>Voice Guide
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Floating Skills Elements -->
+    <div class="floating-element" style="top: 20%; left: 10%; animation-delay: 0s;">
+        <i class="fas fa-laptop-code fa-2x text-info-light"></i>
+    </div>
+    <div class="floating-element" style="top: 30%; right: 15%; animation-delay: 2s;">
+        <i class="fas fa-chart-line fa-2x text-info"></i>
+    </div>
+    <div class="floating-element" style="bottom: 30%; left: 15%; animation-delay: 1s;">
+        <i class="fas fa-handshake fa-2x text-info-dark"></i>
+    </div>
+</section>
+
+<div class="container py-5">
+    <!-- Quick Actions -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="feature-card-futuristic skills-card" data-aos="fade-up">
+                <div class="action-icon bg-primary">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h6>Find Jobs</h6>
+                <p class="small text-muted">Browse available positions and get AI-powered job matching</p>
+                <a href="{{ url_for('skills.jobs') }}" class="btn btn-outline-primary btn-sm">
+                    Browse Jobs
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic skills-card" data-aos="fade-up">
+                <div class="action-icon bg-success">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h6>Learn Skills</h6>
+                <p class="small text-muted">Access microlearning modules for skill development</p>
+                <div class="d-grid gap-1">
+                    <a href="{{ url_for('skills.learning') }}" class="btn btn-outline-success btn-sm">
+                        Interactive Learning
+                    </a>
+                    <a href="{{ url_for('skills.tutorials') }}" class="btn btn-outline-info btn-sm">
+                        Skills Academy
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic skills-card" data-aos="fade-up">
+                <div class="action-icon bg-warning">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                <h6>Volunteer</h6>
+                <p class="small text-muted">Find volunteer opportunities to gain experience</p>
+                <a href="#volunteer-section" class="btn btn-outline-warning btn-sm">
+                    View Opportunities
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card-futuristic skills-card" data-aos="fade-up">
+                <div class="action-icon bg-info">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h6>Career Planning</h6>
+                <p class="small text-muted">Get AI-powered career development guidance</p>
+                <div class="d-grid gap-1">
+                    <a href="{{ url_for('skills.case_prep') }}" class="btn btn-outline-info btn-sm">
+                        Career Planning
+                    </a>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="showSkillForm()">
+                        Share Skills
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Jobs -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-briefcase me-2"></i>
+                Recent Job Opportunities
+            </h3>
+        </div>
+        
+        {% if recent_jobs %}
+        {% for job in recent_jobs %}
+        <div class="col-md-6">
+            <div class="feature-card-futuristic skills-card" data-aos="fade-up">
+                <div class="job-header">
+                    <h6 class="job-title">{{ job.title }}</h6>
+                    <span class="badge bg-primary">{{ job.company }}</span>
+                </div>
+                <div class="job-content">
+                    <p class="job-description">{{ job.description[:150] }}{% if job.description|length > 150 %}...{% endif %}</p>
+                    <div class="job-details">
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    {% if job.is_remote %}Remote{% else %}{{ job.location or 'Location TBD' }}{% endif %}
+                                </small>
+                            </div>
+                            <div class="col-6">
+                                {% if job.salary_range %}
+                                <small class="text-muted">
+                                    <i class="fas fa-dollar-sign me-1"></i>
+                                    {{ job.salary_range }}
+                                </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="job-footer">
+                    <button class="btn btn-outline-primary btn-sm" onclick="matchJobToSkills('{{ job.title }}', '{{ job.description }}', {{ job.id }})">
+                        <i class="fas fa-brain me-1"></i>
+                        AI Match
+                    </button>
+                    {% if job.contact_info %}
+                    <button class="btn btn-primary btn-sm" onclick="contactEmployer('{{ job.contact_info }}', '{{ job.title }}')">
+                        <i class="fas fa-envelope me-1"></i>
+                        Contact
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
+                <h5>No Recent Jobs</h5>
+                <p class="text-muted">New job opportunities will appear here. Check back soon or post your own job listing.</p>
+                <a href="{{ url_for('skills.jobs') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>
+                    Post a Job
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Skills Exchange -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-exchange-alt me-2"></i>
+                Skills Exchange
+            </h3>
+        </div>
+        
+        {% if recent_skills %}
+        {% for skill in recent_skills %}
+        <div class="col-md-6">
+            <div class="feature-card-futuristic skills-card" data-aos="fade-up">
+                <div class="skill-header">
+                    <h6 class="skill-title">{{ skill.title }}</h6>
+                    <span class="badge bg-{{ 'success' if skill.difficulty_level == 'beginner' else 'warning' if skill.difficulty_level == 'intermediate' else 'danger' }}">
+                        {{ skill.difficulty_level.title() }}
+                    </span>
+                </div>
+                <div class="skill-content">
+                    <p class="skill-description">{{ skill.description[:120] }}{% if skill.description|length > 120 %}...{% endif %}</p>
+                    <div class="skill-details">
+                        <small class="text-muted">
+                            <i class="fas fa-tag me-1"></i>{{ skill.skill_category }}
+                        </small>
+                        {% if skill.location %}
+                        <small class="text-muted ms-3">
+                            <i class="fas fa-map-marker-alt me-1"></i>
+                            {% if skill.is_remote %}Remote{% else %}{{ skill.location }}{% endif %}
+                        </small>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="skill-footer">
+                    {% if skill.contact_info %}
+                    <button class="btn btn-outline-primary btn-sm" onclick="contactSkillProvider('{{ skill.contact_info }}', '{{ skill.title }}')">
+                        <i class="fas fa-envelope me-1"></i>
+                        Learn More
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="fas fa-tools fa-3x text-muted mb-3"></i>
+                <h5>No Skills Listed</h5>
+                <p class="text-muted">Community members can share their skills here. Be the first to contribute!</p>
+                <button class="btn btn-primary" onclick="showSkillForm()">
+                    <i class="fas fa-plus me-2"></i>
+                    Share Your Skills
+                </button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Volunteer Opportunities -->
+    <div class="row g-4" id="volunteer-section">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-hands-helping me-2"></i>
+                Volunteer Opportunities
+            </h3>
+        </div>
+        
+        {% if volunteer_opportunities %}
+        {% for opportunity in volunteer_opportunities %}
+        <div class="col-md-6">
+            <div class="feature-card-futuristic skills-card" data-aos="fade-up">
+                <div class="volunteer-header">
+                    <h6 class="volunteer-title">{{ opportunity.title }}</h6>
+                    <span class="badge bg-info">{{ opportunity.time_commitment }}</span>
+                </div>
+                <div class="volunteer-content">
+                    <p class="volunteer-description">{{ opportunity.description }}</p>
+                    <div class="skills-gained">
+                        <h6 class="small fw-bold">Skills You'll Gain:</h6>
+                        <div class="d-flex flex-wrap gap-1">
+                            {% for skill in opportunity.skills_gained %}
+                            <span class="badge bg-light text-dark">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="volunteer-footer">
+                    <button class="btn btn-outline-primary btn-sm" onclick="applyForVolunteer('{{ opportunity.title }}')">
+                        <i class="fas fa-hand-paper me-1"></i>
+                        Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-md-6">
+            <div class="feature-card-futuristic skills-card" data-aos="fade-up">
+                <div class="volunteer-header">
+                    <h6 class="volunteer-title">Community Garden Coordinator</h6>
+                    <span class="badge bg-info">4 hours/week</span>
+                </div>
+                <div class="volunteer-content">
+                    <p class="volunteer-description">Help manage local community gardens and teach sustainable farming practices to residents.</p>
+                    <div class="skills-gained">
+                        <h6 class="small fw-bold">Skills You'll Gain:</h6>
+                        <div class="d-flex flex-wrap gap-1">
+                            <span class="badge bg-light text-dark">Leadership</span>
+                            <span class="badge bg-light text-dark">Agriculture</span>
+                            <span class="badge bg-light text-dark">Community organizing</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="volunteer-footer">
+                    <button class="btn btn-outline-primary btn-sm" onclick="applyForVolunteer('Community Garden Coordinator')">
+                        <i class="fas fa-hand-paper me-1"></i>
+                        Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="feature-card-futuristic skills-card" data-aos="fade-up">
+                <div class="volunteer-header">
+                    <h6 class="volunteer-title">Digital Literacy Instructor</h6>
+                    <span class="badge bg-info">3 hours/week</span>
+                </div>
+                <div class="volunteer-content">
+                    <p class="volunteer-description">Teach basic computer and internet skills to community members of all ages.</p>
+                    <div class="skills-gained">
+                        <h6 class="small fw-bold">Skills You'll Gain:</h6>
+                        <div class="d-flex flex-wrap gap-1">
+                            <span class="badge bg-light text-dark">Teaching</span>
+                            <span class="badge bg-light text-dark">Technology</span>
+                            <span class="badge bg-light text-dark">Communication</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="volunteer-footer">
+                    <button class="btn btn-outline-primary btn-sm" onclick="applyForVolunteer('Digital Literacy Instructor')">
+                        <i class="fas fa-hand-paper me-1"></i>
+                        Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Skill Posting Modal -->
+<div class="modal fade" id="skillModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>
+                    Share Your Skills
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="skillForm" onsubmit="submitSkill(event)">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="skillTitle" class="form-label">Skill Title</label>
+                        <input type="text" class="form-control" id="skillTitle" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="skillDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="skillDescription" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="skillCategory" class="form-label">Category</label>
+                                <select class="form-select" id="skillCategory" name="skill_category" required>
+                                    <option value="">Select category</option>
+                                    <option value="technical">Technical</option>
+                                    <option value="creative">Creative</option>
+                                    <option value="business">Business</option>
+                                    <option value="manual">Manual/Trade</option>
+                                    <option value="language">Language</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="difficultyLevel" class="form-label">Difficulty Level</label>
+                                <select class="form-select" id="difficultyLevel" name="difficulty_level" required>
+                                    <option value="">Select level</option>
+                                    <option value="beginner">Beginner</option>
+                                    <option value="intermediate">Intermediate</option>
+                                    <option value="advanced">Advanced</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="skillLocation" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="skillLocation" name="location" placeholder="City, State or leave blank for remote">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="isRemote" name="is_remote">
+                        <label class="form-check-label" for="isRemote">
+                            Available for remote teaching/mentoring
+                        </label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contactInfo" class="form-label">Contact Information</label>
+                        <input type="text" class="form-control" id="contactInfo" name="contact_info" placeholder="Email or phone number" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>
+                        Share Skill
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Job Matching Modal -->
+<div class="modal fade" id="jobMatchModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-brain me-2"></i>
+                    AI Job Matching
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="jobMatchContent">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary mb-3" role="status"></div>
+                        <p>Analyzing job requirements and matching with your skills...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showSkillForm() {
+    const skillModal = new bootstrap.Modal(document.getElementById('skillModal'));
+    skillModal.show();
+}
+
+function submitSkill(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const skillData = Object.fromEntries(formData.entries());
+    skillData.is_remote = document.getElementById('isRemote').checked;
+    
+    fetch('/skills/post-skill', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(skillData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            speakText('Your skill has been posted successfully. Thank you for contributing to the community!');
+            bootstrap.Modal.getInstance(document.getElementById('skillModal')).hide();
+            location.reload();
+        } else {
+            alert('Error posting skill: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error posting skill. Please try again.');
+    });
+}
+
+function matchJobToSkills(jobTitle, jobDescription, jobId) {
+    const skills = prompt('Enter your skills (comma-separated):');
+    if (!skills) return;
+    
+    const skillsList = skills.split(',').map(s => s.trim());
+    
+    const jobMatchModal = new bootstrap.Modal(document.getElementById('jobMatchModal'));
+    jobMatchModal.show();
+    
+    fetch('/skills/api/job-match', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            job_description: `${jobTitle}: ${jobDescription}`,
+            skills: skillsList
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayJobMatch(data, jobTitle);
+            const matchText = `Job match score: ${Math.round(data.match_score * 100)}%. ${data.reasons.join('. ')}`;
+            speakText(matchText);
+        } else {
+            document.getElementById('jobMatchContent').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Unable to analyze job match: ${data.error}
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('Job match error:', error);
+        document.getElementById('jobMatchContent').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-times me-2"></i>
+                Error analyzing job match. Please try again.
+            </div>
+        `;
+    });
+}
+
+function displayJobMatch(matchData, jobTitle) {
+    const matchScore = Math.round(matchData.match_score * 100);
+    const scoreColor = matchScore >= 80 ? 'success' : matchScore >= 60 ? 'warning' : 'danger';
+    
+    document.getElementById('jobMatchContent').innerHTML = `
+        <div class="job-match-results">
+            <h6 class="mb-3">Match Results for: ${jobTitle}</h6>
+            
+            <div class="match-score mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>Match Score</span>
+                    <span class="badge bg-${scoreColor} fs-6">${matchScore}%</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar bg-${scoreColor}" style="width: ${matchScore}%"></div>
+                </div>
+            </div>
+            
+            <div class="match-details">
+                <div class="mb-3">
+                    <h6><i class="fas fa-check-circle text-success me-2"></i>Match Reasons</h6>
+                    <ul class="list-unstyled">
+                        ${matchData.reasons.map(reason => `<li class="mb-1"><i class="fas fa-arrow-right text-muted me-2"></i>${reason}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="mb-3">
+                    <h6><i class="fas fa-exclamation-triangle text-warning me-2"></i>Skill Gaps</h6>
+                    <ul class="list-unstyled">
+                        ${matchData.skill_gaps.map(gap => `<li class="mb-1"><i class="fas fa-arrow-right text-muted me-2"></i>${gap}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="mb-3">
+                    <h6><i class="fas fa-lightbulb text-info me-2"></i>Recommendations</h6>
+                    <ul class="list-unstyled">
+                        ${matchData.recommendations.map(rec => `<li class="mb-1"><i class="fas fa-arrow-right text-muted me-2"></i>${rec}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function contactEmployer(contactInfo, jobTitle) {
+    speakText(`Contact information for ${jobTitle}: ${contactInfo}`);
+    
+    if (contactInfo.includes('@')) {
+        window.location.href = `mailto:${contactInfo}?subject=Interest in ${jobTitle} position`;
+    } else {
+        alert(`Contact: ${contactInfo}`);
+    }
+}
+
+function contactSkillProvider(contactInfo, skillTitle) {
+    speakText(`Contact information for ${skillTitle}: ${contactInfo}`);
+    
+    if (contactInfo.includes('@')) {
+        window.location.href = `mailto:${contactInfo}?subject=Interest in learning ${skillTitle}`;
+    } else {
+        alert(`Contact: ${contactInfo}`);
+    }
+}
+
+function applyForVolunteer(opportunityTitle) {
+    speakText(`To apply for ${opportunityTitle}, please contact the community coordinator or visit the volunteer registration page.`);
+    
+    const email = prompt('Enter your email to express interest in this volunteer opportunity:');
+    if (email) {
+        alert(`Thank you! We'll contact you at ${email} about the ${opportunityTitle} opportunity.`);
+    }
+}
+</script>
+{% endblock %}

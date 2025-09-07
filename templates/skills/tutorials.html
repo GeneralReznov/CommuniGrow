@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+
+{% block title %}Skills Academy - Community Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="display-4 mb-3">
+                🎓 <i class="fas fa-play-circle me-3"></i>
+                Community Skills Academy
+            </h1>
+            <p class="lead">Master essential skills with <strong>practical, community-focused training</strong></p>
+            <div class="alert alert-info">
+                <strong>🏆 Community-Centered Learning:</strong> Skills designed for real-world application in underserved communities
+            </div>
+        </div>
+    </div>
+    
+    <!-- Skill Level Overview -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark text-light">
+                <div class="card-header">
+                    <h3>🏆 Community Skills Framework</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="scale-tier p-3 rounded border-start border-4 border-warning">
+                                <h5>🌟 Expert Tier (Advanced)</h5>
+                                <p><strong>Community Leadership Level</strong></p>
+                                <small>Can teach others, lead projects, solve complex problems</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="scale-tier p-3 rounded border-start border-4 border-success">
+                                <h5>💪 Professional Tier (Intermediate)</h5>
+                                <p><strong>Job-Ready Skills</strong></p>
+                                <small>Can work independently, handle responsibilities, earn income</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="scale-tier p-3 rounded border-start border-4 border-info">
+                                <h5>🌱 Foundation Tier (Beginner)</h5>
+                                <p><strong>Learning Basics</strong></p>
+                                <small>Building fundamental skills, needs guidance and practice</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skill Development Paths -->
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card bg-dark text-light h-100">
+                <div class="card-header text-center">
+                    <div class="mb-2">🌱</div>
+                    <h4>Foundation Skills</h4>
+                    <p>Target: Basic Competency</p>
+                </div>
+                <div class="card-body">
+                    <div class="skill-progress mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>💻 Digital Literacy</span>
+                            <span class="badge bg-secondary">Level 1</span>
+                        </div>
+                        <div class="progress mt-1">
+                            <div class="progress-bar bg-success" style="width: 30%"></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-links">
+                        <a href="#" class="btn btn-outline-light w-100 mb-2" onclick="startTutorial('basic-computer', 'Foundation')">
+                            <i class="fas fa-play me-2"></i>💻 Computer Basics
+                        </a>
+                        <a href="#" class="btn btn-outline-light w-100 mb-2" onclick="startTutorial('communication', 'Foundation')">
+                            <i class="fas fa-play me-2"></i>🗣️ Communication Skills
+                        </a>
+                        <a href="#" class="btn btn-outline-light w-100 mb-2" onclick="startTutorial('financial-literacy', 'Foundation')">
+                            <i class="fas fa-play me-2"></i>💰 Financial Literacy
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mb-4">
+            <div class="card bg-dark text-light h-100">
+                <div class="card-header text-center">
+                    <div class="mb-2">💪</div>
+                    <h4>Professional Skills</h4>
+                    <p>Target: Job-Ready Competency</p>
+                </div>
+                <div class="card-body">
+                    <div class="skill-progress mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>🔧 Technical Skills</span>
+                            <span class="badge bg-primary">Level 2</span>
+                        </div>
+                        <div class="progress mt-1">
+                            <div class="progress-bar bg-info" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-links">
+                        <a href="#" class="btn btn-outline-light w-100 mb-2" onclick="startTutorial('small-business', 'Professional')">
+                            <i class="fas fa-play me-2"></i>🏪 Small Business Management
+                        </a>
+                        <a href="#" class="btn btn-outline-light w-100 mb-2" onclick="startTutorial('health-worker', 'Professional')">
+                            <i class="fas fa-play me-2"></i>🏥 Community Health Skills
+                        </a>
+                        <a href="#" class="btn btn-outline-light w-100 mb-2" onclick="startTutorial('agriculture', 'Professional')">
+                            <i class="fas fa-play me-2"></i>🌾 Sustainable Agriculture
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mb-4">
+            <div class="card bg-dark text-light h-100">
+                <div class="card-header text-center">
+                    <div class="mb-2">🌟</div>
+                    <h4>Leadership Skills</h4>
+                    <p>Target: Community Leadership</p>
+                </div>
+                <div class="card-body">
+                    <div class="skill-progress mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>👥 Leadership</span>
+                            <span class="badge bg-warning">Level 3</span>
+                        </div>
+                        <div class="progress mt-1">
+                            <div class="progress-bar bg-warning" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="tutorial-links">
+                        <a href="#" class="btn btn-outline-light w-100 mb-2" onclick="startTutorial('project-management', 'Leadership')">
+                            <i class="fas fa-play me-2"></i>📊 Project Management
+                        </a>
+                        <a href="#" class="btn btn-outline-light w-100 mb-2" onclick="startTutorial('community-organizing', 'Leadership')">
+                            <i class="fas fa-play me-2"></i>🤝 Community Organizing
+                        </a>
+                        <a href="#" class="btn btn-outline-light w-100 mb-2" onclick="startTutorial('mentorship', 'Leadership')">
+                            <i class="fas fa-play me-2"></i>🎯 Mentorship & Training
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Interactive Skills Assessment -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-dark text-light">
+                <div class="card-header">
+                    <h3>
+                        💡 Interactive Skills Assessment: Building Community Resources
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="exercise-topic mb-3 p-3 border rounded">
+                                <h5>🎯 Scenario: "Your community needs better access to clean water"</h5>
+                                <small class="text-muted">Real-world problem-solving exercise</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Your Role:</label>
+                                <select class="form-select bg-dark text-light border-secondary" id="role">
+                                    <option value="">Choose your approach</option>
+                                    <option value="technical">🔧 Technical Solution (Water Systems)</option>
+                                    <option value="organizing">🤝 Community Organizing</option>
+                                    <option value="business">💼 Business/Funding Approach</option>
+                                    <option value="education">📚 Education & Awareness</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">🎯 Your Action Plan:</label>
+                                <textarea class="form-control bg-dark text-light border-secondary" id="actionPlan" rows="3" placeholder="e.g., 'I would start by mapping existing water sources and testing quality...'"></textarea>
+                                <small class="text-muted">Describe your step-by-step approach</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">🤝 Community Involvement:</label>
+                                <textarea class="form-control bg-dark text-light border-secondary" id="communityPlan" rows="3" placeholder="How would you involve community members in this solution?"></textarea>
+                                <small class="text-muted">Consider local knowledge, volunteers, and stakeholders</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">📊 Resources Needed:</label>
+                                <textarea class="form-control bg-dark text-light border-secondary" id="resources" rows="3" placeholder="List the skills, materials, and funding you would need..."></textarea>
+                                <small class="text-muted">Be specific about requirements and constraints</small>
+                            </div>
+                            
+                            <button class="btn btn-primary btn-lg" onclick="assessSkills()">
+                                ⚡ Get AI Skills Assessment
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>🏆 Community Impact Framework:</h5>
+                            <div class="alert alert-info mb-3">
+                                <h6>Assessment Criteria:</h6>
+                                <div class="framework">
+                                    <div class="framework-step mb-2">
+                                        <strong>1. 🎯 Problem Understanding:</strong> Clear analysis of the issue
+                                    </div>
+                                    <div class="framework-step mb-2">
+                                        <strong>2. 💡 Solution Design:</strong> Practical, achievable approach
+                                    </div>
+                                    <div class="framework-step mb-2">
+                                        <strong>3. 🤝 Community Engagement:</strong> Inclusive, participatory process
+                                    </div>
+                                    <div class="framework-step">
+                                        <strong>4. 🌱 Sustainability:</strong> Long-term viability and impact
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="skill-recommendations mb-3" id="skillRecommendations" style="display: none;">
+                                <h6>📈 Skill Development Recommendations:</h6>
+                                <div id="recommendationsContent">
+                                    <!-- AI recommendations will appear here -->
+                                </div>
+                            </div>
+                            
+                            <div class="score-guide mb-3">
+                                <h6>🎯 Community Impact Levels:</h6>
+                                <div class="score-tier mb-2">
+                                    <span class="badge bg-warning">🌟 High Impact (90-100):</span>
+                                    <small>Comprehensive, sustainable solutions with strong community buy-in</small>
+                                </div>
+                                <div class="score-tier mb-2">
+                                    <span class="badge bg-success">💪 Good Impact (75-89):</span>
+                                    <small>Solid approach with clear benefits and community involvement</small>
+                                </div>
+                                <div class="score-tier mb-2">
+                                    <span class="badge bg-info">🌱 Developing (60-74):</span>
+                                    <small>Basic understanding with room for improvement in execution</small>
+                                </div>
+                                <div class="score-tier">
+                                    <span class="badge bg-secondary">📚 Learning (Below 60):</span>
+                                    <small>Need more practice in problem-solving and community engagement</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tutorial Modal -->
+<div class="modal fade" id="tutorialModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tutorialTitle">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    Skills Tutorial
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="tutorialContent">
+                <!-- Tutorial content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="completeTutorial">
+                    <i class="fas fa-check me-2"></i>Mark Complete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function startTutorial(tutorialId, level) {
+    const tutorials = {
+        'basic-computer': {
+            title: '💻 Computer Basics',
+            content: `
+                <h4>Computer Fundamentals for Community Work</h4>
+                <div class="tutorial-section mb-4">
+                    <h5>🔌 Getting Started</h5>
+                    <ul>
+                        <li>Identifying computer parts: monitor, keyboard, mouse, CPU</li>
+                        <li>Proper startup and shutdown procedures</li>
+                        <li>Basic navigation using mouse and keyboard</li>
+                        <li>Understanding files and folders</li>
+                    </ul>
+                </div>
+                <div class="tutorial-section mb-4">
+                    <h5>🌐 Internet Basics</h5>
+                    <ul>
+                        <li>Connecting to the internet safely</li>
+                        <li>Using web browsers to find information</li>
+                        <li>Recognizing reliable vs unreliable websites</li>
+                        <li>Basic email setup and communication</li>
+                    </ul>
+                </div>
+                <div class="alert alert-warning">
+                    <strong>Practice Activity:</strong> Set up an email account and send a message to a community member about an upcoming meeting.
+                </div>
+            `
+        },
+        'communication': {
+            title: '🗣️ Communication Skills',
+            content: `
+                <h4>Effective Communication for Community Leadership</h4>
+                <div class="tutorial-section mb-4">
+                    <h5>🎤 Public Speaking</h5>
+                    <ul>
+                        <li>Structuring presentations: introduction, main points, conclusion</li>
+                        <li>Engaging your audience with eye contact and gestures</li>
+                        <li>Managing nervousness and building confidence</li>
+                        <li>Adapting your message for different audiences</li>
+                    </ul>
+                </div>
+                <div class="tutorial-section mb-4">
+                    <h5>👂 Active Listening</h5>
+                    <ul>
+                        <li>Giving full attention to speakers</li>
+                        <li>Asking clarifying questions</li>
+                        <li>Summarizing what you've heard</li>
+                        <li>Responding appropriately to concerns</li>
+                    </ul>
+                </div>
+                <div class="alert alert-warning">
+                    <strong>Practice Activity:</strong> Practice presenting a 5-minute overview of a community issue to a friend or family member.
+                </div>
+            `
+        },
+        'small-business': {
+            title: '🏪 Small Business Management',
+            content: `
+                <h4>Starting and Managing a Community Business</h4>
+                <div class="tutorial-section mb-4">
+                    <h5>📋 Business Planning</h5>
+                    <ul>
+                        <li>Identifying market opportunities in your community</li>
+                        <li>Writing a simple business plan</li>
+                        <li>Understanding your customers and competition</li>
+                        <li>Setting realistic financial goals</li>
+                    </ul>
+                </div>
+                <div class="tutorial-section mb-4">
+                    <h5>💰 Financial Management</h5>
+                    <ul>
+                        <li>Basic bookkeeping and record keeping</li>
+                        <li>Managing cash flow and budgets</li>
+                        <li>Understanding profit and loss</li>
+                        <li>Planning for taxes and legal requirements</li>
+                    </ul>
+                </div>
+                <div class="alert alert-warning">
+                    <strong>Practice Activity:</strong> Create a business plan for a service your community needs, including startup costs and monthly expenses.
+                </div>
+            `
+        }
+    };
+    
+    const tutorial = tutorials[tutorialId];
+    if (!tutorial) return;
+    
+    document.getElementById('tutorialTitle').innerHTML = `
+        <i class="fas fa-graduation-cap me-2"></i>
+        ${tutorial.title} - ${level} Level
+    `;
+    document.getElementById('tutorialContent').innerHTML = tutorial.content;
+    
+    const modal = new bootstrap.Modal(document.getElementById('tutorialModal'));
+    modal.show();
+}
+
+function assessSkills() {
+    const role = document.getElementById('role').value;
+    const actionPlan = document.getElementById('actionPlan').value;
+    const communityPlan = document.getElementById('communityPlan').value;
+    const resources = document.getElementById('resources').value;
+    
+    if (!role || !actionPlan || !communityPlan || !resources) {
+        alert('Please fill in all fields for a complete assessment.');
+        return;
+    }
+    
+    // Simulate AI assessment
+    const score = Math.floor(Math.random() * 40) + 60; // Score between 60-100
+    const recommendations = generateRecommendations(role, score);
+    
+    document.getElementById('skillRecommendations').style.display = 'block';
+    document.getElementById('recommendationsContent').innerHTML = `
+        <div class="alert alert-success">
+            <h6>Your Community Impact Score: ${score}/100</h6>
+            <p>${getScoreDescription(score)}</p>
+        </div>
+        <div class="recommendations-list">
+            <h6>📚 Recommended Skill Development:</h6>
+            <ul>
+                ${recommendations.map(rec => `<li>${rec}</li>`).join('')}
+            </ul>
+        </div>
+        <div class="mt-3">
+            <a href="{{ url_for('skills.learning') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-right me-2"></i>Start Learning These Skills
+            </a>
+        </div>
+    `;
+}
+
+function generateRecommendations(role, score) {
+    const baseRecs = {
+        'technical': [
+            '🔧 Water system design and maintenance',
+            '🧪 Water quality testing procedures',
+            '⚡ Solar-powered water pumps'
+        ],
+        'organizing': [
+            '🤝 Community meeting facilitation',
+            '📢 Advocacy and campaigning',
+            '💬 Conflict resolution skills'
+        ],
+        'business': [
+            '💰 Grant writing and fundraising',
+            '📊 Financial planning and budgeting',
+            '🤝 Partnership development'
+        ],
+        'education': [
+            '🎓 Adult education techniques',
+            '📱 Creating educational materials',
+            '📈 Behavior change communication'
+        ]
+    };
+    
+    let recs = baseRecs[role] || ['🌟 Leadership development', '💡 Problem-solving skills', '🤝 Team collaboration'];
+    
+    if (score < 75) {
+        recs.push('📚 Basic project management', '🗣️ Communication skills');
+    }
+    if (score < 85) {
+        recs.push('💪 Community engagement strategies');
+    }
+    
+    return recs.slice(0, 4);
+}
+
+function getScoreDescription(score) {
+    if (score >= 90) return "Excellent! You demonstrate strong community problem-solving skills.";
+    if (score >= 75) return "Good work! Your approach shows solid understanding with room for growth.";
+    if (score >= 60) return "You're on the right track. Focus on developing specific skills for greater impact.";
+    return "Keep learning! Consider starting with foundation skills before tackling complex problems.";
+}
+</script>
+{% endblock %}

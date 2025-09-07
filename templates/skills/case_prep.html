@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+
+{% block title %}Skill Development Planning - Community Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>
+                        AI-Powered Career Development Planning
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="lead">
+                        Get personalized career guidance and skill development plans from our AI coach. 
+                        Create strategic pathways for any career goal or skill enhancement.
+                    </p>
+                    
+                    <form id="careerPlanForm" onsubmit="generateCareerPlan(event)">
+                        <div class="mb-4">
+                            <label for="careerGoal" class="form-label">Career Goal or Skill Focus:</label>
+                            <textarea class="form-control" id="careerGoal" name="careerGoal" rows="3" 
+                                     placeholder="e.g., I want to become a digital marketing specialist for small businesses..." required></textarea>
+                            <div class="form-text">
+                                Be specific with your goals for better planning recommendations.
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="currentLevel" class="form-label">Current Experience Level:</label>
+                                <select class="form-select" id="currentLevel" name="currentLevel" required>
+                                    <option value="">Select your level</option>
+                                    <option value="beginner">Beginner (New to this field)</option>
+                                    <option value="intermediate">Intermediate (Some experience)</option>
+                                    <option value="advanced">Advanced (Experienced professional)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="timeframe" class="form-label">Timeline for Goals:</label>
+                                <select class="form-select" id="timeframe" name="timeframe">
+                                    <option value="3months">3 Months</option>
+                                    <option value="6months">6 Months</option>
+                                    <option value="1year">1 Year</option>
+                                    <option value="2years">2+ Years</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="currentSkills" class="form-label">Current Skills (comma-separated):</label>
+                            <input type="text" class="form-control" id="currentSkills" name="currentSkills" 
+                                   placeholder="e.g., Computer basics, Customer service, Mathematics...">
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg" id="generateBtn">
+                                <i class="fas fa-robot me-2"></i>
+                                Generate Career Development Plan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Generated Plan Content -->
+            <div id="planContent" class="mt-4" style="display: none;">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-map me-2"></i>
+                            Your Personalized Career Development Plan
+                        </h5>
+                        <div>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="downloadPlan()">
+                                <i class="fas fa-download me-1"></i>
+                                Download
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="printPlan()">
+                                <i class="fas fa-print me-1"></i>
+                                Print
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body" id="planDetails">
+                        <!-- Plan content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Career Planning Tips -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Career Planning Tips
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="fas fa-target text-primary me-2"></i>
+                            <strong>Set SMART goals</strong> - Specific, Measurable, Achievable, Relevant, Time-bound
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-stairs text-info me-2"></i>
+                            <strong>Break down big goals</strong> into smaller, manageable steps
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-network-wired text-warning me-2"></i>
+                            <strong>Build your network</strong> - Connect with professionals in your field
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-chart-bar text-success me-2"></i>
+                            <strong>Track your progress</strong> and celebrate small wins
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-sync text-secondary me-2"></i>
+                            <strong>Stay adaptable</strong> - Be open to adjusting your plan
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Recent Plans -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-history me-2"></i>
+                        Recent Development Plans
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="recentPlans">
+                        <p class="text-muted text-center">No recent plans</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Goal Templates -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-rocket me-2"></i>
+                        Popular Career Goals
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted mb-3">Need inspiration? Try these popular goals:</p>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="useGoal('I want to start a small food business in my community')">
+                            Food Business Entrepreneur
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="useGoal('I want to become a community health worker')">
+                            Community Health Worker
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="useGoal('I want to learn digital marketing for local businesses')">
+                            Digital Marketing Specialist
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="useGoal('I want to become a renewable energy technician')">
+                            Renewable Energy Tech
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPlan = null;
+
+function generateCareerPlan(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const generateBtn = document.getElementById('generateBtn');
+    
+    // Update button state
+    generateBtn.disabled = true;
+    generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating...';
+    
+    fetch('/skills/api/career-plan', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            currentPlan = data.plan;
+            displayPlan(data.plan, formData.get('careerGoal'), formData.get('currentLevel'));
+            saveToRecent(formData.get('careerGoal'), formData.get('currentLevel'));
+        } else {
+            alert('Error generating plan: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to generate career development plan');
+    })
+    .finally(() => {
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = '<i class="fas fa-robot me-2"></i>Generate Career Development Plan';
+    });
+}
+
+function displayPlan(planData, goal, level) {
+    const planContent = document.getElementById('planContent');
+    const planDetails = document.getElementById('planDetails');
+    
+    let html = `
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h6>Goal: <span class="text-primary">${goal}</span></h6>
+                <h6>Level: <span class="badge bg-${level === 'beginner' ? 'success' : level === 'intermediate' ? 'warning' : 'danger'}">${level.charAt(0).toUpperCase() + level.slice(1)}</span></h6>
+            </div>
+            <div class="col-md-4 text-end">
+                <small class="text-muted">Generated: ${new Date().toLocaleString()}</small>
+            </div>
+        </div>
+        
+        <div class="plan-content">
+            <div class="mb-4">
+                <h6 class="border-bottom pb-2">
+                    <i class="fas fa-map-marked-alt me-2"></i>
+                    🎯 Complete Development Plan
+                </h6>
+                <div class="bg-light p-4 rounded text-dark" style="white-space: pre-wrap; line-height: 1.6; font-size: 0.95rem;">
+                    ${formatPlanText(planData.full_text || planData)}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    planDetails.innerHTML = html;
+    planContent.style.display = 'block';
+    planContent.scrollIntoView({ behavior: 'smooth' });
+}
+
+function formatPlanText(text) {
+    return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/\n/g, '<br>');
+}
+
+function useGoal(goalText) {
+    document.getElementById('careerGoal').value = goalText;
+    document.getElementById('careerGoal').focus();
+}
+
+function downloadPlan() {
+    if (!currentPlan) return;
+    
+    const planText = currentPlan.full_text || currentPlan;
+    const blob = new Blob([planText], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'career-development-plan.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+}
+
+function printPlan() {
+    if (!currentPlan) return;
+    
+    const printWindow = window.open('', '', 'height=600,width=800');
+    printWindow.document.write('<html><head><title>Career Development Plan</title>');
+    printWindow.document.write('<style>body{font-family:Arial,sans-serif;margin:20px;}</style>');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write('<h2>Career Development Plan</h2>');
+    printWindow.document.write('<pre>' + (currentPlan.full_text || currentPlan) + '</pre>');
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+}
+
+function saveToRecent(goal, level) {
+    let recent = JSON.parse(localStorage.getItem('recentPlans') || '[]');
+    recent.unshift({
+        goal: goal.substring(0, 50) + (goal.length > 50 ? '...' : ''),
+        level: level,
+        date: new Date().toLocaleDateString()
+    });
+    recent = recent.slice(0, 5); // Keep only 5 recent
+    localStorage.setItem('recentPlans', JSON.stringify(recent));
+    updateRecentPlans();
+}
+
+function updateRecentPlans() {
+    const recent = JSON.parse(localStorage.getItem('recentPlans') || '[]');
+    const container = document.getElementById('recentPlans');
+    
+    if (recent.length === 0) {
+        container.innerHTML = '<p class="text-muted text-center">No recent plans</p>';
+        return;
+    }
+    
+    container.innerHTML = recent.map(plan => `
+        <div class="recent-plan-item mb-2 p-2 border rounded cursor-pointer" onclick="useGoal('${plan.goal}')">
+            <small class="fw-bold">${plan.goal}</small>
+            <br>
+            <small class="text-muted">${plan.level} - ${plan.date}</small>
+        </div>
+    `).join('');
+}
+
+// Load recent plans on page load
+document.addEventListener('DOMContentLoaded', updateRecentPlans);
+</script>
+{% endblock %}

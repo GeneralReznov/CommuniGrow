@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+
+{% block title %}Climate Alerts - Community Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">
+            <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+            Climate & Weather Alerts
+        </h1>
+        <button class="btn btn-primary" onclick="speakText('Climate alerts page. Current weather warnings and emergency notifications for your area.')">
+            <i class="fas fa-volume-up me-2"></i>
+            Read Alerts
+        </button>
+    </div>
+
+    <!-- Active Alerts -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h3 class="h4 mb-3">Active Alerts</h3>
+            {% if alerts %}
+                {% for alert in alerts %}
+                <div class="alert alert-{{ 'danger' if alert.severity == 'severe' else 'warning' if alert.severity == 'moderate' else 'info' }} alert-dismissible" role="alert">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="fas fa-{{ 'exclamation-triangle' if alert.severity == 'severe' else 'exclamation-circle' if alert.severity == 'moderate' else 'info-circle' }} fa-lg"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="alert-heading">{{ alert.alert_type.title() }} Alert - {{ alert.location }}</h6>
+                            <p class="mb-2">{{ alert.message }}</p>
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                Issued: {{ alert.created_at.strftime('%Y-%m-%d %H:%M') }}
+                                {% if alert.expires_at %}
+                                | Expires: {{ alert.expires_at.strftime('%Y-%m-%d %H:%M') }}
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="alert alert-success" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle fa-lg me-3"></i>
+                    <div>
+                        <h6 class="alert-heading mb-1">No Active Alerts</h6>
+                        <p class="mb-0">There are currently no weather or climate alerts for your area.</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Alert Types Info -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h3 class="h4 mb-3">Understanding Alert Levels</h3>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-info">
+                <div class="card-header bg-info text-white">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Low Risk
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">General weather advisories and seasonal reminders. Continue normal activities with awareness.</p>
+                    <ul class="list-unstyled small">
+                        <li>• Weather advisories</li>
+                        <li>• Seasonal preparations</li>
+                        <li>• General awareness</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Moderate Risk
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Weather conditions require attention and possible precautions. Monitor updates closely.</p>
+                    <ul class="list-unstyled small">
+                        <li>• Storm watches</li>
+                        <li>• Heat advisories</li>
+                        <li>• Flood potential</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        High Risk
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Dangerous conditions requiring immediate action. Follow emergency procedures.</p>
+                    <ul class="list-unstyled small">
+                        <li>• Severe storm warnings</li>
+                        <li>• Flood warnings</li>
+                        <li>• Extreme heat/cold</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Preparedness -->
+    <div class="row g-4">
+        <div class="col-12">
+            <h3 class="h4 mb-3">Emergency Preparedness</h3>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-first-aid me-2"></i>
+                        Emergency Kit Essentials
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-tint text-primary me-2"></i>
+                            Water (1 gallon per person per day for 3 days)
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-bread-slice text-warning me-2"></i>
+                            Non-perishable food (3-day supply)
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-flashlight text-info me-2"></i>
+                            Flashlight and extra batteries
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-radio text-success me-2"></i>
+                            Battery-powered or hand crank radio
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="fas fa-pills text-danger me-2"></i>
+                            First aid kit and medications
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-route me-2"></i>
+                        Emergency Contacts & Plans
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Emergency Numbers</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Emergency Services:</strong> 911</li>
+                            <li><strong>Local Emergency:</strong> Contact local authorities</li>
+                            <li><strong>Weather Service:</strong> Check local weather office</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Emergency Plan</h6>
+                        <ul class="list-unstyled small">
+                            <li>• Identify evacuation routes</li>
+                            <li>• Designate meeting points</li>
+                            <li>• Keep important documents safe</li>
+                            <li>• Plan for pets and livestock</li>
+                        </ul>
+                    </div>
+                    
+                    <button class="btn btn-outline-primary btn-sm" onclick="downloadEmergencyPlan()">
+                        <i class="fas fa-download me-2"></i>
+                        Download Plan Template
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Subscription -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h5 class="card-title">
+                        <i class="fas fa-bell me-2"></i>
+                        Stay Informed
+                    </h5>
+                    <p class="card-text">
+                        Enable location services to receive personalized weather alerts and emergency notifications for your area.
+                    </p>
+                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                        <button class="btn btn-primary" onclick="enableLocationAlerts()">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            Enable Location Alerts
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="testEmergencyAlert()">
+                            <i class="fas fa-test-tube me-2"></i>
+                            Test Alert System
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function enableLocationAlerts() {
+    if (navigator.geolocation) {
+        speakText('Requesting location access to provide personalized weather alerts...');
+        navigator.geolocation.getCurrentPosition(function(position) {
+            // Store location preferences (in a real app, this would be saved to the backend)
+            localStorage.setItem('alertLocation', JSON.stringify({
+                lat: position.coords.latitude,
+                lon: position.coords.longitude,
+                enabled: true
+            }));
+            
+            speakText('Location alerts enabled. You will now receive weather warnings for your area.');
+            
+            // Show success message
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show mt-3';
+            alert.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>
+                Location alerts enabled! You'll receive weather warnings for your area.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.querySelector('.container').appendChild(alert);
+        }, function() {
+            speakText('Unable to access location. Please enable location services in your browser settings.');
+        });
+    } else {
+        speakText('Geolocation is not supported by this browser.');
+    }
+}
+
+function testEmergencyAlert() {
+    speakText('Testing emergency alert system...');
+    
+    // Show test alert
+    const testAlert = document.createElement('div');
+    testAlert.className = 'alert alert-warning alert-dismissible fade show mt-3';
+    testAlert.innerHTML = `
+        <div class="d-flex align-items-start">
+            <i class="fas fa-exclamation-triangle fa-lg me-3"></i>
+            <div class="flex-grow-1">
+                <h6 class="alert-heading">TEST ALERT - This is a test</h6>
+                <p class="mb-2">This is a test of the emergency alert system. In a real emergency, you would receive critical information and instructions here.</p>
+                <small class="text-muted">
+                    <i class="fas fa-clock me-1"></i>
+                    Test issued: ${new Date().toLocaleString()}
+                </small>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.querySelector('.container').appendChild(testAlert);
+    
+    // Speak the test alert
+    setTimeout(() => {
+        speakText('Test alert: This is a test of the emergency alert system. In a real emergency, you would receive critical information here.');
+    }, 1000);
+}
+
+function downloadEmergencyPlan() {
+    speakText('Emergency plan template includes evacuation routes, emergency contacts, and supply checklists. Contact local emergency management for templates specific to your area.');
+}
+
+// Auto-read alerts on page load if requested
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('read_alerts') === 'true') {
+        setTimeout(readAllAlerts, 1000);
+    }
+});
+
+function readAllAlerts() {
+    const alerts = document.querySelectorAll('.alert:not(.alert-success)');
+    if (alerts.length > 0) {
+        let alertText = 'Current weather alerts: ';
+        alerts.forEach((alert, index) => {
+            const heading = alert.querySelector('.alert-heading');
+            const content = alert.querySelector('p');
+            if (heading && content) {
+                alertText += `Alert ${index + 1}: ${heading.textContent}. ${content.textContent}. `;
+            }
+        });
+        speakText(alertText);
+    } else {
+        speakText('No active weather alerts for your area.');
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,602 @@
+{% extends "base.html" %}
+
+{% block title %}Marketplace - Food & Nutrition{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">
+            <i class="fas fa-store me-2"></i>
+            Community Food Marketplace
+        </h1>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary" onclick="speakText('Community food marketplace. Browse fresh produce, food sharing, and surplus rescue items. Use voice commands like show fresh produce or post food item.')">
+                <i class="fas fa-volume-up me-2"></i>
+                Page Guide
+            </button>
+            <button class="btn btn-primary" onclick="showFoodForm()">
+                <i class="fas fa-plus me-2"></i>
+                Post Item
+            </button>
+        </div>
+    </div>
+
+    <!-- Marketplace Categories -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="category-card active" data-category="all" onclick="filterByCategory('all')">
+                <div class="category-icon">
+                    <i class="fas fa-th-large"></i>
+                </div>
+                <div class="category-info">
+                    <h6>All Items</h6>
+                    <p class="text-muted mb-0">{{ (marketplace_items|length + sharing_items|length + surplus_items|length) if marketplace_items else '40+' }} available</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="category-card" data-category="marketplace" onclick="filterByCategory('marketplace')">
+                <div class="category-icon bg-primary">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="category-info">
+                    <h6>Fresh Produce</h6>
+                    <p class="text-muted mb-0">{{ marketplace_items|length if marketplace_items else '15+' }} for sale</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="category-card" data-category="sharing" onclick="filterByCategory('sharing')">
+                <div class="category-icon bg-success">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                <div class="category-info">
+                    <h6>Community Sharing</h6>
+                    <p class="text-muted mb-0">{{ sharing_items|length if sharing_items else '12+' }} free items</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search food items..." onkeyup="searchItems()">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="locationFilter" onchange="filterItems()">
+                        <option value="">All Locations</option>
+                        <option value="downtown">Downtown</option>
+                        <option value="northside">Northside</option>
+                        <option value="eastend">East End</option>
+                        <option value="westside">Westside</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="sortFilter" onchange="sortItems()">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                        <i class="fas fa-times me-2"></i>Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Marketplace Items -->
+    <div class="marketplace-section mb-5" id="marketplace-section">
+        <h3 class="h4 mb-3">
+            <i class="fas fa-shopping-cart me-2 text-primary"></i>
+            Fresh Produce & Market Items
+        </h3>
+        <div class="row g-4" id="marketplace-items">
+            {% if marketplace_items %}
+            {% for item in marketplace_items %}
+            <div class="col-lg-4 col-md-6 marketplace-item" data-category="marketplace" data-location="{{ item.location|lower|replace(' ', '') }}" data-title="{{ item.title|lower }}" data-price="{{ item.price or 0 }}">
+                <div class="marketplace-card">
+                    <div class="item-header">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h6 class="item-title">{{ item.title }}</h6>
+                            <span class="badge bg-primary">For Sale</span>
+                        </div>
+                        {% if item.price %}
+                        <div class="item-price">
+                            <span class="price-amount">${{ "%.2f"|format(item.price) }}</span>
+                            {% if item.quantity %}
+                            <small class="text-muted">/ {{ item.quantity }}</small>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="item-content">
+                        <p class="item-description">{{ item.description }}</p>
+                        
+                        <div class="item-details">
+                            <div class="detail-row">
+                                <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                                <span>{{ item.location }}</span>
+                            </div>
+                            {% if item.quantity %}
+                            <div class="detail-row">
+                                <i class="fas fa-weight text-muted me-2"></i>
+                                <span>{{ item.quantity }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="detail-row">
+                                <i class="fas fa-clock text-muted me-2"></i>
+                                <span>{{ item.created_at.strftime('%B %d, %Y') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="item-actions">
+                        <button class="btn btn-primary" onclick="purchaseItem({{ item.id }}, '{{ item.title }}', {{ item.price or 0 }})">
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            Buy Now
+                        </button>
+                        {% if item.contact_info %}
+                        <button class="btn btn-outline-secondary" onclick="contactSeller('{{ item.contact_info }}', '{{ item.title }}')">
+                            <i class="fas fa-envelope me-2"></i>
+                            Contact
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="col-12">
+                <div class="empty-category">
+                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                    <h5>No Market Items</h5>
+                    <p class="text-muted">Fresh produce and market items will appear here.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Community Sharing Items -->
+    <div class="sharing-section mb-5" id="sharing-section">
+        <h3 class="h4 mb-3">
+            <i class="fas fa-hands-helping me-2 text-success"></i>
+            Community Food Sharing
+        </h3>
+        <div class="row g-4" id="sharing-items">
+            {% if sharing_items %}
+            {% for item in sharing_items %}
+            <div class="col-lg-4 col-md-6 marketplace-item" data-category="sharing" data-location="{{ item.location|lower|replace(' ', '') }}" data-title="{{ item.title|lower }}" data-price="0">
+                <div class="marketplace-card sharing-card">
+                    <div class="item-header">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h6 class="item-title">{{ item.title }}</h6>
+                            <span class="badge bg-success">Free</span>
+                        </div>
+                    </div>
+                    
+                    <div class="item-content">
+                        <p class="item-description">{{ item.description }}</p>
+                        
+                        <div class="item-details">
+                            <div class="detail-row">
+                                <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                                <span>{{ item.location }}</span>
+                            </div>
+                            {% if item.quantity %}
+                            <div class="detail-row">
+                                <i class="fas fa-weight text-muted me-2"></i>
+                                <span>{{ item.quantity }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="detail-row">
+                                <i class="fas fa-clock text-muted me-2"></i>
+                                <span>{{ item.created_at.strftime('%B %d, %Y') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="item-actions">
+                        {% if item.contact_info %}
+                        <button class="btn btn-success flex-grow-1" onclick="contactSeller('{{ item.contact_info }}', '{{ item.title }}')">
+                            <i class="fas fa-heart me-2"></i>
+                            Request Item
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="col-12">
+                <div class="empty-category">
+                    <i class="fas fa-hands-helping fa-3x text-muted mb-3"></i>
+                    <h5>No Shared Items</h5>
+                    <p class="text-muted">Community members sharing food will appear here.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Surplus Rescue Items -->
+    <div class="surplus-section mb-5" id="surplus-section">
+        <h3 class="h4 mb-3">
+            <i class="fas fa-recycle me-2 text-warning"></i>
+            Surplus Food Rescue
+        </h3>
+        <div class="row g-4" id="surplus-items">
+            {% if surplus_items %}
+            {% for item in surplus_items %}
+            <div class="col-lg-4 col-md-6 marketplace-item" data-category="surplus" data-location="{{ item.location|lower|replace(' ', '') }}" data-title="{{ item.title|lower }}" data-price="0">
+                <div class="marketplace-card surplus-card">
+                    <div class="item-header">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h6 class="item-title">{{ item.title }}</h6>
+                            <span class="badge bg-warning text-dark">Surplus</span>
+                        </div>
+                        <div class="urgency-indicator">
+                            <small class="text-warning">
+                                <i class="fas fa-clock me-1"></i>
+                                Pick up soon to prevent waste
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="item-content">
+                        <p class="item-description">{{ item.description }}</p>
+                        
+                        <div class="item-details">
+                            <div class="detail-row">
+                                <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                                <span>{{ item.location }}</span>
+                            </div>
+                            {% if item.quantity %}
+                            <div class="detail-row">
+                                <i class="fas fa-weight text-muted me-2"></i>
+                                <span>{{ item.quantity }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="detail-row">
+                                <i class="fas fa-clock text-muted me-2"></i>
+                                <span>{{ item.created_at.strftime('%B %d, %Y') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="item-actions">
+                        {% if item.contact_info %}
+                        <button class="btn btn-warning flex-grow-1" onclick="contactSeller('{{ item.contact_info }}', '{{ item.title }}')">
+                            <i class="fas fa-truck me-2"></i>
+                            Arrange Pickup
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="col-12">
+                <div class="empty-category">
+                    <i class="fas fa-recycle fa-3x text-muted mb-3"></i>
+                    <h5>No Surplus Items</h5>
+                    <p class="text-muted">Surplus food rescue items will appear here.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- No Results Message -->
+    <div id="noResults" class="text-center py-5" style="display: none;">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <h5>No Items Found</h5>
+        <p class="text-muted">Try adjusting your search or filters, or check back later for new listings.</p>
+        <button class="btn btn-primary" onclick="clearFilters()">
+            Clear All Filters
+        </button>
+    </div>
+</div>
+
+<!-- Food Posting Modal -->
+<div class="modal fade" id="foodModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>
+                    Post Food Item
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="foodForm" onsubmit="submitFood(event)">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="foodTitle" class="form-label">Item Title *</label>
+                        <input type="text" class="form-control" id="foodTitle" name="title" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="foodDescription" class="form-label">Description *</label>
+                        <textarea class="form-control" id="foodDescription" name="description" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="foodCategory" class="form-label">Category *</label>
+                                <select class="form-select" id="foodCategory" name="category" required onchange="togglePriceField()">
+                                    <option value="">Select category</option>
+                                    <option value="marketplace">Marketplace (For Sale)</option>
+                                    <option value="sharing">Community Sharing (Free)</option>
+                                    <option value="surplus">Surplus Rescue (Free)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3" id="priceField" style="display: none;">
+                                <label for="foodPrice" class="form-label">Price ($)</label>
+                                <input type="number" class="form-control" id="foodPrice" name="price" step="0.01" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="foodQuantity" class="form-label">Quantity/Amount</label>
+                                <input type="text" class="form-control" id="foodQuantity" name="quantity">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="foodLocation" class="form-label">Location *</label>
+                                <input type="text" class="form-control" id="foodLocation" name="location" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="foodContact" class="form-label">Contact Information *</label>
+                        <input type="text" class="form-control" id="foodContact" name="contact_info" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>
+                        Post Item
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentCategory = 'all';
+
+function filterByCategory(category) {
+    currentCategory = category;
+    
+    // Update active category card
+    document.querySelectorAll('.category-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    document.querySelector(`[data-category="${category}"]`).classList.add('active');
+    
+    // Show/hide sections
+    const sections = ['marketplace-section', 'sharing-section', 'surplus-section'];
+    sections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (category === 'all') {
+            section.style.display = 'block';
+        } else if (sectionId.includes(category)) {
+            section.style.display = 'block';
+        } else {
+            section.style.display = 'none';
+        }
+    });
+    
+    filterItems();
+    
+    const categoryNames = {
+        'all': 'all items',
+        'marketplace': 'marketplace items for sale',
+        'sharing': 'community sharing items',
+        'surplus': 'surplus rescue items'
+    };
+    
+    speakText(`Showing ${categoryNames[category]}.`);
+}
+
+function searchItems() {
+    filterItems();
+}
+
+function filterItems() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const locationFilter = document.getElementById('locationFilter').value.toLowerCase();
+    
+    const items = document.querySelectorAll('.marketplace-item');
+    let visibleCount = 0;
+    
+    items.forEach(item => {
+        const title = item.dataset.title;
+        const location = item.dataset.location;
+        const category = item.dataset.category;
+        
+        let show = true;
+        
+        // Category filter
+        if (currentCategory !== 'all' && category !== currentCategory) {
+            show = false;
+        }
+        
+        // Search filter
+        if (searchTerm && !title.includes(searchTerm)) {
+            show = false;
+        }
+        
+        // Location filter
+        if (locationFilter && !location.includes(locationFilter)) {
+            show = false;
+        }
+        
+        item.style.display = show ? 'block' : 'none';
+        if (show) visibleCount++;
+    });
+    
+    // Show no results message
+    document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+}
+
+function sortItems() {
+    const sortBy = document.getElementById('sortFilter').value;
+    const containers = ['marketplace-items', 'sharing-items', 'surplus-items'];
+    
+    containers.forEach(containerId => {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        const items = Array.from(container.querySelectorAll('.marketplace-item'));
+        
+        items.sort((a, b) => {
+            switch (sortBy) {
+                case 'newest':
+                    return new Date(b.querySelector('.detail-row:last-child span').textContent) - 
+                           new Date(a.querySelector('.detail-row:last-child span').textContent);
+                case 'oldest':
+                    return new Date(a.querySelector('.detail-row:last-child span').textContent) - 
+                           new Date(b.querySelector('.detail-row:last-child span').textContent);
+                case 'price-low':
+                    return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                case 'price-high':
+                    return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+                default:
+                    return 0;
+            }
+        });
+        
+        items.forEach(item => container.appendChild(item));
+    });
+}
+
+function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('locationFilter').value = '';
+    document.getElementById('sortFilter').value = 'newest';
+    
+    filterByCategory('all');
+    filterItems();
+    
+    speakText('All filters cleared. Showing all available food items.');
+}
+
+function showFoodForm() {
+    const foodModal = new bootstrap.Modal(document.getElementById('foodModal'));
+    foodModal.show();
+}
+
+function togglePriceField() {
+    const category = document.getElementById('foodCategory').value;
+    const priceField = document.getElementById('priceField');
+    
+    if (category === 'marketplace') {
+        priceField.style.display = 'block';
+        document.getElementById('foodPrice').required = true;
+    } else {
+        priceField.style.display = 'none';
+        document.getElementById('foodPrice').required = false;
+        document.getElementById('foodPrice').value = '';
+    }
+}
+
+function submitFood(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const foodData = Object.fromEntries(formData.entries());
+    
+    if (foodData.price) {
+        foodData.price = parseFloat(foodData.price);
+    }
+    
+    fetch('/food/post-listing', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(foodData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            speakText('Food item posted successfully to the community marketplace!');
+            bootstrap.Modal.getInstance(document.getElementById('foodModal')).hide();
+            location.reload();
+        } else {
+            alert('Error posting food item: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error posting food item. Please try again.');
+    });
+}
+
+function purchaseItem(itemId, itemTitle, price) {
+    if (confirm(`Purchase ${itemTitle} for $${price.toFixed(2)}?`)) {
+        fetch('/payments/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount: price,
+                item_name: itemTitle,
+                item_description: `Food marketplace purchase: ${itemTitle}`,
+                return_url: '/food/marketplace'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.checkout_url) {
+                window.location.href = data.checkout_url;
+            } else {
+                alert('Payment processing error. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Payment error:', error);
+            alert('Payment processing error. Please try again.');
+        });
+    }
+}
+
+function contactSeller(contactInfo, itemTitle) {
+    speakText(`Contact information for ${itemTitle}: ${contactInfo}`);
+    
+    if (contactInfo.includes('@')) {
+        window.location.href = `mailto:${contactInfo}?subject=Interest in ${itemTitle}`;
+    } else {
+        alert(`Contact: ${contactInfo}`);
+    }
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    filterByCategory('all');
+});
+</script>
+{% endblock %}
