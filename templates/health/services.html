@@ -1,0 +1,663 @@
+{% extends "base.html" %}
+
+{% block title %}Health Services - Community Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">
+            <i class="fas fa-map-marker-alt me-2"></i>
+            Local Health Services
+        </h1>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary" onclick="speakText('Health services map showing nearby clinics, hospitals, and health resources. Use voice commands like find nearest clinic or show mental health services.')">
+                <i class="fas fa-volume-up me-2"></i>
+                Page Guide
+            </button>
+            <button class="btn btn-primary" onclick="locateMe()">
+                <i class="fas fa-crosshairs me-2"></i>
+                Find Near Me
+            </button>
+        </div>
+    </div>
+
+    <!-- Service Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h6 class="card-title mb-3">Filter Health Services</h6>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <select class="form-select" id="serviceTypeFilter" onchange="filterServices()">
+                        <option value="">All Services</option>
+                        <option value="hospital">Hospitals</option>
+                        <option value="clinic">Clinics</option>
+                        <option value="pharmacy">Pharmacies</option>
+                        <option value="mental_health">Mental Health</option>
+                        <option value="dental">Dental Care</option>
+                        <option value="emergency">Emergency Services</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="distanceFilter" onchange="filterServices()">
+                        <option value="">Any Distance</option>
+                        <option value="1">Within 1 mile</option>
+                        <option value="5">Within 5 miles</option>
+                        <option value="10">Within 10 miles</option>
+                        <option value="25">Within 25 miles</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" id="searchFilter" placeholder="Search services..." onkeyup="searchServices()">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                        <i class="fas fa-times me-2"></i>Clear Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map and Services -->
+    <div class="row g-4">
+        <!-- Interactive Map -->
+        <div class="col-lg-8">
+            <div class="map-container">
+                <div class="map-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-map me-2"></i>
+                        Interactive Health Services Map
+                    </h5>
+                </div>
+                <div id="servicesMap" class="health-services-map">
+                    <!-- Map will be loaded here -->
+                </div>
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-marker hospital"></div>
+                        <span>Hospitals</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-marker clinic"></div>
+                        <span>Clinics</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-marker pharmacy"></div>
+                        <span>Pharmacies</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-marker mental-health"></div>
+                        <span>Mental Health</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Services List -->
+        <div class="col-lg-4">
+            <div class="services-sidebar">
+                <h5 class="mb-3">
+                    <i class="fas fa-list me-2"></i>
+                    Nearby Services
+                </h5>
+                
+                <div id="servicesList" class="services-list">
+                    <div class="loading-services text-center py-4">
+                        <div class="spinner-border text-primary mb-3" role="status"></div>
+                        <p>Loading health services...</p>
+                        <button class="btn btn-primary btn-sm" onclick="loadSampleServices()">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            Load Services
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Information -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="emergency-services-card">
+                <div class="emergency-header">
+                    <h5 class="text-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Emergency Services
+                    </h5>
+                </div>
+                <div class="emergency-content">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="emergency-contact">
+                                <div class="contact-number text-danger">112</div>
+                                <div class="contact-label">Emergency Services</div>
+                                <p class="contact-description">For life-threatening emergencies, severe injuries, or immediate medical attention</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="emergency-contact">
+                                <div class="contact-number text-info">100</div>
+                                <div class="contact-label">Police</div>
+                                <p class="contact-description">For police assistance and security emergencies</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="emergency-contact">
+                                <div class="contact-number text-warning">102</div>
+                                <div class="contact-label">Ambulance</div>
+                                <p class="contact-description">Medical emergency ambulance services</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Categories -->
+    <div class="row mt-5 g-4">
+        <div class="col-12">
+            <h3 class="h4 mb-3">
+                <i class="fas fa-th-large me-2"></i>
+                Health Service Categories
+            </h3>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="service-category-card" onclick="filterServicesByCategory('primary_care')">
+                <div class="category-icon bg-primary">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div class="category-info">
+                    <h6>Primary Care</h6>
+                    <p class="text-muted mb-0">General practitioners, family medicine, routine checkups</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="service-category-card" onclick="filterServicesByCategory('mental_health')">
+                <div class="category-icon bg-info">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="category-info">
+                    <h6>Mental Health</h6>
+                    <p class="text-muted mb-0">Counselors, therapists, psychiatrists, support groups</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="service-category-card" onclick="filterServicesByCategory('specialty')">
+                <div class="category-icon bg-success">
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+                <div class="category-info">
+                    <h6>Specialty Care</h6>
+                    <p class="text-muted mb-0">Specialists, advanced treatments, surgical services</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="service-category-card" onclick="filterServicesByCategory('pharmacy')">
+                <div class="category-icon bg-warning">
+                    <i class="fas fa-pills"></i>
+                </div>
+                <div class="category-info">
+                    <h6>Pharmacy</h6>
+                    <p class="text-muted mb-0">Medications, prescriptions, health supplies</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="service-category-card" onclick="filterServicesByCategory('dental')">
+                <div class="category-icon bg-danger">
+                    <i class="fas fa-tooth"></i>
+                </div>
+                <div class="category-info">
+                    <h6>Dental Care</h6>
+                    <p class="text-muted mb-0">Dentists, oral health, dental emergencies</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="service-category-card" onclick="filterServicesByCategory('maternal')">
+                <div class="category-icon bg-pink">
+                    <i class="fas fa-baby"></i>
+                </div>
+                <div class="category-info">
+                    <h6>Maternal & Child</h6>
+                    <p class="text-muted mb-0">Pregnancy care, pediatrics, family health</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Service Details Modal -->
+<div class="modal fade" id="serviceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="serviceModalTitle">
+                    <i class="fas fa-hospital me-2"></i>
+                    Service Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="serviceModalContent">
+                <!-- Service details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="getDirectionsBtn">
+                    <i class="fas fa-route me-2"></i>
+                    Get Directions
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let map;
+let userLocation;
+let servicesData = [];
+let markers = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeMap();
+    loadHealthServices();
+});
+
+function initializeMap() {
+    // Initialize Leaflet map
+    map = L.map('servicesMap').setView([28.6139, 77.2090], 12); // Default to New Delhi, India
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Add map click event
+    map.on('click', function(e) {
+        speakText('Map clicked. You can search for services in this area.');
+    });
+}
+
+function locateMe() {
+    if (navigator.geolocation) {
+        speakText('Getting your location to find nearby health services...');
+        
+        navigator.geolocation.getCurrentPosition(function(position) {
+            userLocation = [position.coords.latitude, position.coords.longitude];
+            
+            // Center map on user location
+            map.setView(userLocation, 14);
+            
+            // Add user location marker
+            L.marker(userLocation, {
+                icon: L.divIcon({
+                    className: 'user-location-marker',
+                    html: '<i class="fas fa-user"></i>',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                })
+            }).addTo(map).bindPopup('Your Location');
+            
+            // Load nearby services
+            loadHealthServices();
+            
+            speakText('Location found. Loading nearby health services.');
+        }, function(error) {
+            console.error('Geolocation error:', error);
+            speakText('Unable to get your location. Showing general area services.');
+        });
+    } else {
+        alert('Geolocation is not supported by this browser.');
+    }
+}
+
+function loadHealthServices() {
+    fetch('/health/api/health-services')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                servicesData = data.services;
+                displayServicesOnMap();
+                displayServicesList();
+                speakText(`Found ${servicesData.length} health services in your area.`);
+            } else {
+                loadSampleServices();
+            }
+        })
+        .catch(error => {
+            console.error('Services loading error:', error);
+            loadSampleServices();
+        });
+}
+
+function loadSampleServices() {
+    // Sample services for demonstration
+    servicesData = [
+        {
+            id: 1,
+            name: 'Community Health Center',
+            service_type: 'clinic',
+            address: '123 Main St, Community Center',
+            latitude: 40.7128,
+            longitude: -74.0060,
+            contact_info: '(555) 123-4567',
+            hours: 'Mon-Fri 8AM-6PM, Sat 9AM-2PM',
+            services_offered: 'Primary care, preventive services, immunizations'
+        },
+        {
+            id: 2,
+            name: 'Downtown Medical Clinic',
+            service_type: 'clinic',
+            address: '456 Health Ave, Downtown',
+            latitude: 40.7589,
+            longitude: -73.9851,
+            contact_info: '(555) 234-5678',
+            hours: 'Mon-Fri 7AM-7PM',
+            services_offered: 'Family medicine, urgent care, lab services'
+        },
+        {
+            id: 3,
+            name: 'Mental Health Support Center',
+            service_type: 'mental_health',
+            address: '789 Wellness Dr, Midtown',
+            latitude: 40.7505,
+            longitude: -73.9934,
+            contact_info: '(555) 345-6789',
+            hours: '24/7 Crisis Line, Appointments Mon-Fri 9AM-8PM',
+            services_offered: 'Counseling, therapy, crisis intervention, support groups'
+        },
+        {
+            id: 4,
+            name: 'City General Hospital',
+            service_type: 'hospital',
+            address: '321 Hospital Blvd, Central District',
+            latitude: 40.7282,
+            longitude: -73.9942,
+            contact_info: '(555) 456-7890',
+            hours: '24/7 Emergency, Outpatient 6AM-10PM',
+            services_offered: 'Emergency care, surgery, maternity, specialists'
+        }
+    ];
+    
+    displayServicesOnMap();
+    displayServicesList();
+    speakText(`Showing ${servicesData.length} sample health services. Use location services for personalized results.`);
+}
+
+function displayServicesOnMap() {
+    // Clear existing markers
+    markers.forEach(marker => map.removeLayer(marker));
+    markers = [];
+    
+    servicesData.forEach(service => {
+        if (service.latitude && service.longitude) {
+            const icon = getServiceIcon(service.service_type);
+            
+            const marker = L.marker([service.latitude, service.longitude], {
+                icon: L.divIcon({
+                    className: `service-marker ${service.service_type}`,
+                    html: `<i class="${icon}"></i>`,
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                })
+            });
+            
+            marker.bindPopup(`
+                <div class="service-popup">
+                    <h6>${service.name}</h6>
+                    <p class="mb-1"><strong>${service.service_type.replace('_', ' ').toUpperCase()}</strong></p>
+                    <p class="small mb-2">${service.address}</p>
+                    <button class="btn btn-primary btn-sm" onclick="showServiceDetails(${service.id})">
+                        View Details
+                    </button>
+                </div>
+            `);
+            
+            marker.addTo(map);
+            markers.push(marker);
+        }
+    });
+}
+
+function displayServicesList() {
+    const servicesList = document.getElementById('servicesList');
+    
+    if (servicesData.length === 0) {
+        servicesList.innerHTML = `
+            <div class="no-services text-center py-4">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h6>No Services Found</h6>
+                <p class="text-muted">Try adjusting your filters or location.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let servicesHtml = '';
+    
+    servicesData.forEach(service => {
+        const icon = getServiceIcon(service.service_type);
+        const distance = userLocation ? calculateDistance(userLocation, [service.latitude, service.longitude]) : null;
+        
+        servicesHtml += `
+            <div class="service-item" data-service-type="${service.service_type}" data-service-id="${service.id}">
+                <div class="service-icon">
+                    <i class="${icon}"></i>
+                </div>
+                <div class="service-info">
+                    <h6 class="service-name">${service.name}</h6>
+                    <p class="service-type text-muted mb-1">${service.service_type.replace('_', ' ').toUpperCase()}</p>
+                    <p class="service-address small mb-2">${service.address}</p>
+                    ${distance ? `<p class="service-distance small text-success"><i class="fas fa-route me-1"></i>${distance.toFixed(1)} miles away</p>` : ''}
+                    <div class="service-actions">
+                        <button class="btn btn-outline-primary btn-sm me-2" onclick="showServiceDetails(${service.id})">
+                            <i class="fas fa-info-circle me-1"></i>Details
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" onclick="focusOnService(${service.latitude}, ${service.longitude})">
+                            <i class="fas fa-map-marker-alt me-1"></i>Map
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    servicesList.innerHTML = servicesHtml;
+}
+
+function getServiceIcon(serviceType) {
+    const icons = {
+        hospital: 'fas fa-hospital',
+        clinic: 'fas fa-clinic-medical',
+        pharmacy: 'fas fa-pills',
+        mental_health: 'fas fa-brain',
+        dental: 'fas fa-tooth',
+        emergency: 'fas fa-ambulance'
+    };
+    return icons[serviceType] || 'fas fa-medical-bag';
+}
+
+function calculateDistance(pos1, pos2) {
+    const R = 3959; // Earth's radius in miles
+    const dLat = (pos2[0] - pos1[0]) * Math.PI / 180;
+    const dLon = (pos2[1] - pos1[1]) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(pos1[0] * Math.PI / 180) * Math.cos(pos2[0] * Math.PI / 180) *
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+function showServiceDetails(serviceId) {
+    const service = servicesData.find(s => s.id === serviceId);
+    if (!service) return;
+    
+    document.getElementById('serviceModalTitle').innerHTML = `
+        <i class="${getServiceIcon(service.service_type)} me-2"></i>
+        ${service.name}
+    `;
+    
+    document.getElementById('serviceModalContent').innerHTML = `
+        <div class="service-details">
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <h6>Service Type</h6>
+                    <p class="text-muted">${service.service_type.replace('_', ' ').toUpperCase()}</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Hours</h6>
+                    <p class="text-muted">${service.hours}</p>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <h6>Address</h6>
+                <p class="text-muted">${service.address}</p>
+            </div>
+            
+            <div class="mb-4">
+                <h6>Contact Information</h6>
+                <p class="text-muted">${service.contact_info}</p>
+            </div>
+            
+            <div class="mb-4">
+                <h6>Services Offered</h6>
+                <p class="text-muted">${service.services_offered}</p>
+            </div>
+            
+            ${userLocation ? `
+                <div class="mb-3">
+                    <h6>Distance</h6>
+                    <p class="text-success">
+                        <i class="fas fa-route me-2"></i>
+                        ${calculateDistance(userLocation, [service.latitude, service.longitude]).toFixed(1)} miles away
+                    </p>
+                </div>
+            ` : ''}
+        </div>
+    `;
+    
+    document.getElementById('getDirectionsBtn').onclick = () => getDirections(service);
+    
+    const serviceModal = new bootstrap.Modal(document.getElementById('serviceModal'));
+    serviceModal.show();
+    
+    speakText(`Showing details for ${service.name}, a ${service.service_type.replace('_', ' ')} located at ${service.address}.`);
+}
+
+function focusOnService(lat, lng) {
+    map.setView([lat, lng], 16);
+    speakText('Map focused on selected health service.');
+}
+
+function getDirections(service) {
+    if (userLocation) {
+        const directionsUrl = `https://www.google.com/maps/dir/${userLocation[0]},${userLocation[1]}/${service.latitude},${service.longitude}`;
+        window.open(directionsUrl, '_blank');
+    } else {
+        const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(service.address)}`;
+        window.open(searchUrl, '_blank');
+    }
+    speakText('Opening directions in Google Maps.');
+}
+
+function filterServices() {
+    const serviceType = document.getElementById('serviceTypeFilter').value;
+    const distance = document.getElementById('distanceFilter').value;
+    
+    let filteredServices = servicesData;
+    
+    if (serviceType) {
+        filteredServices = filteredServices.filter(service => service.service_type === serviceType);
+    }
+    
+    if (distance && userLocation) {
+        filteredServices = filteredServices.filter(service => {
+            const dist = calculateDistance(userLocation, [service.latitude, service.longitude]);
+            return dist <= parseFloat(distance);
+        });
+    }
+    
+    // Update display
+    const originalData = servicesData;
+    servicesData = filteredServices;
+    displayServicesOnMap();
+    displayServicesList();
+    servicesData = originalData; // Restore original data
+    
+    speakText(`Showing ${filteredServices.length} filtered health services.`);
+}
+
+function searchServices() {
+    const searchTerm = document.getElementById('searchFilter').value.toLowerCase();
+    
+    if (searchTerm.trim() === '') {
+        displayServicesList();
+        return;
+    }
+    
+    const filteredServices = servicesData.filter(service => 
+        service.name.toLowerCase().includes(searchTerm) ||
+        service.services_offered.toLowerCase().includes(searchTerm) ||
+        service.service_type.toLowerCase().includes(searchTerm)
+    );
+    
+    // Temporarily update servicesData for display
+    const originalData = servicesData;
+    servicesData = filteredServices;
+    displayServicesOnMap();
+    displayServicesList();
+    servicesData = originalData;
+}
+
+function clearFilters() {
+    document.getElementById('serviceTypeFilter').value = '';
+    document.getElementById('distanceFilter').value = '';
+    document.getElementById('searchFilter').value = '';
+    
+    displayServicesOnMap();
+    displayServicesList();
+    
+    speakText('All filters cleared. Showing all health services.');
+}
+
+function filterServicesByCategory(category) {
+    const filterMap = {
+        primary_care: 'clinic',
+        mental_health: 'mental_health',
+        specialty: 'hospital',
+        pharmacy: 'pharmacy',
+        dental: 'dental',
+        maternal: 'clinic'
+    };
+    
+    const serviceType = filterMap[category];
+    if (serviceType) {
+        document.getElementById('serviceTypeFilter').value = serviceType;
+        filterServices();
+        
+        const categoryNames = {
+            primary_care: 'primary care services',
+            mental_health: 'mental health services',
+            specialty: 'specialty care services',
+            pharmacy: 'pharmacy services',
+            dental: 'dental care services',
+            maternal: 'maternal and child health services'
+        };
+        
+        speakText(`Filtering to show ${categoryNames[category]}.`);
+    }
+}
+</script>
+{% endblock %}

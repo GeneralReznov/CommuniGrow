@@ -1,0 +1,789 @@
+{% extends "base.html" %}
+
+{% block title %}Climate Monitoring - India Weather Forecast{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="futuristic-hero climate-theme">
+    <div class="container">
+        <div class="hero-content" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="hero-title-small">
+                        <i class="fas fa-satellite me-2 module-icon-animated"></i>
+                        Climate Monitoring - India
+                    </h1>
+                    <p class="hero-subtitle-small" data-aos="fade-up" data-aos-delay="300">
+                        Real-time weather monitoring, heatmaps, and forecasts for India with AI-powered climate analysis and adaptation recommendations.
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end" data-aos="fade-left" data-aos-delay="600">
+                    <button class="btn btn-futuristic-climate" onclick="speakText('Climate monitoring for India. View weather heatmaps, rainfall data, temperature forecasts, and satellite imagery. Get AI recommendations for climate adaptation based on current conditions.')">
+                        <i class="fas fa-volume-up me-2"></i>Voice Guide
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container py-5">
+    <!-- Current Weather Summary -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <div class="feature-card-futuristic">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3><i class="fas fa-thermometer-half me-2"></i>Current Weather Conditions</h3>
+                    <button class="btn btn-outline-primary btn-sm" onclick="refreshWeatherData()">
+                        <i class="fas fa-refresh me-2"></i>Refresh
+                    </button>
+                </div>
+                
+                <div id="weather-summary" class="row">
+                    <div class="col-md-6">
+                        <div class="weather-card text-center">
+                            <div class="weather-icon mb-3">
+                                <i class="fas fa-sun fa-4x text-warning"></i>
+                            </div>
+                            <h4 class="weather-temp" id="current-temp">32°C</h4>
+                            <p class="text-muted" id="weather-desc">Partly Cloudy</p>
+                            <small class="text-muted" id="current-location">Delhi, India</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="weather-details">
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="detail-item">
+                                        <i class="fas fa-eye text-info"></i>
+                                        <span class="detail-label">Humidity</span>
+                                        <span class="detail-value" id="humidity">65%</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="detail-item">
+                                        <i class="fas fa-wind text-success"></i>
+                                        <span class="detail-label">Wind Speed</span>
+                                        <span class="detail-value" id="wind-speed">12 km/h</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="detail-item">
+                                        <i class="fas fa-cloud-rain text-primary"></i>
+                                        <span class="detail-label">Precipitation</span>
+                                        <span class="detail-value" id="precipitation">0mm</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="detail-item">
+                                        <i class="fas fa-compress-arrows-alt text-secondary"></i>
+                                        <span class="detail-label">Pressure</span>
+                                        <span class="detail-value" id="pressure">1013 hPa</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="feature-card-futuristic h-100">
+                <h5 class="mb-3"><i class="fas fa-brain me-2"></i>AI Climate Analysis</h5>
+                <div id="ai-analysis">
+                    <div class="alert alert-info">
+                        <p class="mb-2"><strong>Today's Recommendation:</strong></p>
+                        <p class="small mb-0" id="ai-recommendation">
+                            Based on current conditions, consider staying hydrated and avoiding outdoor activities during peak afternoon hours. Monitor air quality levels.
+                        </p>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <h6>Climate Insights</h6>
+                        <ul class="small" id="climate-insights">
+                            <li>Temperature above seasonal average</li>
+                            <li>Low precipitation expected</li>
+                            <li>Air quality moderate</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Map Tabs -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="feature-card-futuristic">
+                <h3 class="mb-4"><i class="fas fa-map me-2"></i>India Weather Maps</h3>
+                
+                <!-- Map Type Selector -->
+                <ul class="nav nav-tabs mb-4" id="mapTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="rainfall-tab" data-bs-toggle="tab" data-bs-target="#rainfall-map" type="button" role="tab">
+                            <i class="fas fa-cloud-rain me-2"></i>Rainfall
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="temperature-tab" data-bs-toggle="tab" data-bs-target="#temperature-map" type="button" role="tab">
+                            <i class="fas fa-thermometer-half me-2"></i>Temperature
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="satellite-tab" data-bs-toggle="tab" data-bs-target="#satellite-map" type="button" role="tab">
+                            <i class="fas fa-satellite me-2"></i>Satellite
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="alerts-tab" data-bs-toggle="tab" data-bs-target="#alerts-map" type="button" role="tab">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Weather Alerts
+                        </button>
+                    </li>
+                </ul>
+                
+                <!-- Map Content -->
+                <div class="tab-content" id="mapTabContent">
+                    <div class="tab-pane fade show active" id="rainfall-map" role="tabpanel">
+                        <div class="map-container">
+                            <div class="map-header d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">24-Hour Rainfall Map</h5>
+                                <div class="map-controls">
+                                    <button class="btn btn-outline-secondary btn-sm me-2" onclick="toggleAnimation()">
+                                        <i class="fas fa-play me-1"></i>Animate
+                                    </button>
+                                    <select class="form-select form-select-sm" style="width: auto; display: inline-block;" onchange="updateTimeRange(this.value)">
+                                        <option value="24h">Last 24 Hours</option>
+                                        <option value="48h">Last 48 Hours</option>
+                                        <option value="7d">Last 7 Days</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="india-map-placeholder">
+                                <div class="india-leaflet-map" id="rainfall-map-canvas" aria-label="India rainfall map"></div>
+                                <div class="map-legend">
+                                    <h6>Rainfall Intensity</h6>
+                                    <div class="legend-items">
+                                        <span class="legend-item"><span class="legend-color" style="background: #48dbfb;"></span> Light (0-10mm)</span>
+                                        <span class="legend-item"><span class="legend-color" style="background: #feca57;"></span> Moderate (10-50mm)</span>
+                                        <span class="legend-item"><span class="legend-color" style="background: #ff6b6b;"></span> Heavy (50+mm)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="temperature-map" role="tabpanel">
+                        <div class="map-container">
+                            <div class="map-header d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Temperature Heatmap</h5>
+                                <select class="form-select form-select-sm" style="width: auto;">
+                                    <option>Current Temperature</option>
+                                    <option>Max Temperature</option>
+                                    <option>Min Temperature</option>
+                                </select>
+                            </div>
+                            <div class="india-map-placeholder">
+                                <div class="india-leaflet-map" id="temperature-map-canvas" aria-label="India temperature map"></div>
+                                <div class="map-legend">
+                                    <h6>Temperature (°C)</h6>
+                                    <div class="temp-gradient">
+                                        <div class="temp-scale">
+                                            <span>15°</span><span>20°</span><span>25°</span><span>30°</span><span>35°</span><span>40°</span><span>45°</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="satellite-map" role="tabpanel">
+                        <div class="map-container">
+                            <div class="map-header d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Satellite Imagery</h5>
+                                <div class="map-controls">
+                                    <select class="form-select form-select-sm me-2" style="width: auto; display: inline-block;">
+                                        <option>Visible Light</option>
+                                        <option>Infrared</option>
+                                        <option>Water Vapor</option>
+                                    </select>
+                                    <span class="badge bg-success">Live</span>
+                                </div>
+                            </div>
+                            <div class="india-map-placeholder">
+                                <div class="india-leaflet-map" id="satellite-map-canvas" aria-label="India satellite map"></div>
+                                <div class="satellite-attribution-note">
+                                    <i class="fas fa-satellite me-1"></i>
+                                    Satellite basemap | Refreshes when this tab opens
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="alerts-map" role="tabpanel">
+                        <div class="map-container">
+                            <div class="map-header mb-3">
+                                <h5 class="mb-0">Active Weather Alerts</h5>
+                            </div>
+                            <div class="alerts-list mb-4">
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong>Heavy Rainfall Warning</strong> - West Bengal, Odisha (Valid until Sept 8, 11:59 PM)
+                                </div>
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-thermometer-full me-2"></i>
+                                    <strong>Heat Wave Alert</strong> - Rajasthan, Gujarat (Valid until Sept 9, 6:00 AM)
+                                </div>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-wind me-2"></i>
+                                    <strong>Strong Wind Advisory</strong> - Tamil Nadu Coast (Valid until Sept 8, 3:00 PM)
+                                </div>
+                            </div>
+                            <div class="india-map-placeholder">
+                                <div class="india-leaflet-map" id="alerts-map-canvas" aria-label="India weather alerts map"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5-Day Forecast -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="feature-card-futuristic">
+                <h3 class="mb-4"><i class="fas fa-calendar-alt me-2"></i>5-Day Weather Forecast</h3>
+                
+                <div class="forecast-container">
+                    <div class="row g-3" id="forecast-cards">
+                        <!-- Forecast cards will be generated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Climate Data Summary -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="feature-card-futuristic">
+                <h5 class="mb-3"><i class="fas fa-chart-line me-2"></i>Climate Trends</h5>
+                <div class="trend-item mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>Average Temperature Trend</span>
+                        <span class="text-danger"><i class="fas fa-arrow-up"></i> +1.2°C</span>
+                    </div>
+                    <div class="progress mt-1">
+                        <div class="progress-bar bg-danger" style="width: 70%"></div>
+                    </div>
+                </div>
+                <div class="trend-item mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>Rainfall Pattern</span>
+                        <span class="text-warning"><i class="fas fa-arrow-down"></i> -15%</span>
+                    </div>
+                    <div class="progress mt-1">
+                        <div class="progress-bar bg-warning" style="width: 45%"></div>
+                    </div>
+                </div>
+                <div class="trend-item">
+                    <div class="d-flex justify-content-between">
+                        <span>Humidity Levels</span>
+                        <span class="text-success"><i class="fas fa-arrow-up"></i> +5%</span>
+                    </div>
+                    <div class="progress mt-1">
+                        <div class="progress-bar bg-success" style="width: 65%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="feature-card-futuristic">
+                <h5 class="mb-3"><i class="fas fa-exclamation-circle me-2"></i>Climate Alerts & Warnings</h5>
+                <div class="alert-item mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="alert-icon me-3">
+                            <i class="fas fa-thermometer-full text-danger"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong>Heat Wave Warning</strong>
+                            <p class="small mb-0">Expected in Northern India from Sept 9-11</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert-item mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="alert-icon me-3">
+                            <i class="fas fa-cloud-rain text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong>Monsoon Activity</strong>
+                            <p class="small mb-0">Heavy rainfall expected in Eastern states</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert-item">
+                    <div class="d-flex align-items-center">
+                        <div class="alert-icon me-3">
+                            <i class="fas fa-hurricane text-info"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong>Cyclonic Circulation</strong>
+                            <p class="small mb-0">Well-marked low pressure area over Bay of Bengal</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('climate.alerts') }}" class="btn btn-primary">
+                        <i class="fas fa-bell me-2"></i>View All Alerts
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadWeatherData();
+    initializeIndiaMaps();
+    
+    // Auto-refresh every 15 minutes
+    setInterval(refreshWeatherData, 15 * 60 * 1000);
+});
+
+function loadWeatherData() {
+    fetch('/climate/api/weather/Delhi')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateWeatherDisplay(data);
+                updateAIAnalysis(data);
+                renderForecast(data.forecast);
+                speakText('Weather data loaded for India. Current conditions and AI recommendations are now available.');
+            } else {
+                throw new Error(data.error || 'Weather service unavailable');
+            }
+        })
+        .catch(error => {
+            console.error('Weather data error:', error);
+            // Fallback to demo data
+            updateWeatherDisplay({
+                success: true,
+                weather: {
+                    location: 'Delhi, India',
+                    conditions: 'Partly cloudy with warm temperatures',
+                    temperature: '32°C',
+                    humidity: '65%'
+                },
+                advice: ['Stay hydrated during high temperatures', 'Monitor air quality levels', 'Use sun protection when outdoors'],
+                warnings: ['Heat wave conditions possible'],
+                forecast: []
+            });
+            renderForecast([]);
+        });
+}
+
+function updateWeatherDisplay(data) {
+    if (data.success) {
+        document.getElementById('current-temp').textContent = data.weather.temperature || '32°C';
+        document.getElementById('weather-desc').textContent = data.weather.conditions || 'Loading...';
+        document.getElementById('current-location').textContent = data.weather.location || 'India';
+        document.getElementById('humidity').textContent = data.weather.humidity || '65%';
+        document.getElementById('wind-speed').textContent = data.weather.wind_speed || '12 km/h';
+        document.getElementById('precipitation').textContent = data.weather.precipitation || '0mm';
+        document.getElementById('pressure').textContent = data.weather.pressure || 'Not available';
+    }
+}
+
+function updateAIAnalysis(data) {
+    if (data.advice && data.advice.length > 0) {
+        document.getElementById('ai-recommendation').textContent = data.advice[0] || 'Stay safe and monitor weather conditions.';
+        
+        const insightsList = document.getElementById('climate-insights');
+        if (data.advice.length > 1) {
+            insightsList.innerHTML = data.advice.slice(1).map(insight => `<li>${insight}</li>`).join('');
+        }
+    }
+}
+
+function refreshWeatherData() {
+    const refreshBtn = document.querySelector('[onclick="refreshWeatherData()"]');
+    const originalText = refreshBtn.innerHTML;
+    
+    refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Refreshing...';
+    refreshBtn.disabled = true;
+    
+    setTimeout(() => {
+        loadWeatherData();
+        refreshBtn.innerHTML = originalText;
+        refreshBtn.disabled = false;
+        speakText('Weather data refreshed with latest information from India.');
+    }, 2000);
+}
+
+function renderForecast(forecast) {
+    const forecastContainer = document.getElementById('forecast-cards');
+    const fallback = [
+        {day: 'Today', high: 32, low: 25, condition: 'Partly cloudy', icon: 'cloudy'},
+        {day: 'Tomorrow', high: 34, low: 26, condition: 'Sunny', icon: 'sunny'},
+        {day: 'Day 3', high: 33, low: 26, condition: 'Cloudy', icon: 'cloudy'},
+        {day: 'Day 4', high: 31, low: 25, condition: 'Light rain', icon: 'rainy'},
+        {day: 'Day 5', high: 32, low: 25, condition: 'Partly cloudy', icon: 'cloudy'}
+    ];
+    const days = (Array.isArray(forecast) && forecast.length ? forecast : fallback).slice(0, 5);
+    
+    let forecastHTML = '';
+    
+    days.forEach((day, i) => {
+        const iconName = getForecastIcon(day.icon || day.condition);
+        const color = iconName === 'sun' ? 'text-warning' : iconName === 'cloud-rain' ? 'text-primary' : 'text-secondary';
+        const high = String(day.high ?? '--').replace(/°C/gi, '');
+        const low = String(day.low ?? '--').replace(/°C/gi, '');
+        forecastHTML += `
+            <div class="col-md-2 col-sm-4 col-6">
+                <div class="forecast-card text-center">
+                    <div class="forecast-day">${escapeHtml(day.day || `Day ${i + 1}`)}</div>
+                    <div class="forecast-icon my-2">
+                        <i class="fas fa-${iconName} fa-2x ${color}"></i>
+                    </div>
+                    <div class="forecast-temp">${escapeHtml(high)}° / ${escapeHtml(low)}°C</div>
+                    <div class="forecast-condition">${escapeHtml(day.condition || 'Conditions unavailable')}</div>
+                </div>
+            </div>
+        `;
+    });
+    
+    forecastContainer.innerHTML = forecastHTML;
+}
+
+function getForecastIcon(condition) {
+    const value = String(condition).toLowerCase();
+    if (value.includes('rain') || value.includes('storm')) return 'cloud-rain';
+    if (value.includes('sun') || value.includes('clear')) return 'sun';
+    return 'cloud';
+}
+
+function toggleAnimation() {
+    const animationBtn = document.querySelector('#rainfall-map-canvas')?.closest('.map-container')?.querySelector('button');
+    if (!animationBtn) return;
+    const isPlaying = animationBtn.innerHTML.includes('pause');
+    
+    if (isPlaying) {
+        animationBtn.innerHTML = '<i class="fas fa-play me-1"></i>Animate';
+        // Stop animation logic here
+    } else {
+        animationBtn.innerHTML = '<i class="fas fa-pause me-1"></i>Pause';
+        // Start animation logic here
+        animateRainfallPoints();
+    }
+}
+
+function animateRainfallPoints() {
+    rainfallPoints.forEach((point, index) => {
+        setTimeout(() => point.setStyle({radius: point.getRadius() + 5}), index * 180);
+        setTimeout(() => point.setStyle({radius: Math.max(6, point.getRadius() - 5)}), index * 180 + 550);
+    });
+}
+
+function updateTimeRange(range) {
+    speakText(`Updated rainfall map to show ${range.replace('h', ' hours').replace('d', ' days')} of data.`);
+    // Logic to update map data based on time range
+}
+
+// Map interaction handlers
+let rainfallPoints = [];
+let indiaMaps = {};
+let indiaBoundary = null;
+const indiaWeatherPoints = [
+    {name: 'Delhi', lat: 28.6139, lng: 77.2090, rain: 8, temp: 32},
+    {name: 'Jaipur', lat: 26.9124, lng: 75.7873, rain: 3, temp: 35},
+    {name: 'Mumbai', lat: 19.0760, lng: 72.8777, rain: 42, temp: 29},
+    {name: 'Kolkata', lat: 22.5726, lng: 88.3639, rain: 58, temp: 30},
+    {name: 'Bengaluru', lat: 12.9716, lng: 77.5946, rain: 16, temp: 25},
+    {name: 'Chennai', lat: 13.0827, lng: 80.2707, rain: 27, temp: 31},
+    {name: 'Guwahati', lat: 26.1445, lng: 91.7362, rain: 64, temp: 28},
+    {name: 'Srinagar', lat: 34.0837, lng: 74.7973, rain: 5, temp: 20}
+];
+
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+    }[char]));
+}
+
+function initializeIndiaMaps() {
+    if (typeof L === 'undefined') return;
+    const definitions = [
+        ['rainfall-map-canvas', 'rainfall'],
+        ['temperature-map-canvas', 'temperature'],
+        ['satellite-map-canvas', 'satellite'],
+        ['alerts-map-canvas', 'alerts']
+    ];
+
+    // Register tab handlers before fetching the boundary so a fast user click
+    // cannot race the network request and leave a map uninitialized.
+    definitions.forEach(([id, type]) => {
+        const tabPane = document.getElementById(id)?.closest('.tab-pane');
+        const tabButton = tabPane ? document.querySelector(`[data-bs-target="#${tabPane.id}"]`) : null;
+        tabButton?.addEventListener('shown.bs.tab', () => {
+            if (indiaBoundary) createIndiaMap(id, type, indiaBoundary);
+        });
+    });
+
+    fetch('/static/data/india-boundary.geojson')
+        .then(response => {
+            if (!response.ok) throw new Error('India boundary unavailable');
+            return response.json();
+        })
+        .then(boundary => {
+            indiaBoundary = boundary;
+            definitions.forEach(([id, type]) => {
+                const tabPane = document.getElementById(id)?.closest('.tab-pane');
+                if (tabPane?.classList.contains('show') && tabPane.classList.contains('active')) {
+                    createIndiaMap(id, type, boundary);
+                }
+            });
+        })
+        .catch(error => console.error('India map error:', error));
+}
+
+function createIndiaMap(id, type, boundary) {
+    const element = document.getElementById(id);
+    if (!element || element.dataset.mapInitialized === 'true') return;
+    element.dataset.mapInitialized = 'true';
+    const map = L.map(element, {scrollWheelZoom: false, zoomControl: true});
+    indiaMaps[type] = map;
+    if (type === 'satellite') {
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri',
+            maxZoom: 7
+        }).addTo(map);
+    } else {
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors',
+            maxZoom: 7
+        }).addTo(map);
+    }
+    const boundaryLayer = L.geoJSON(boundary, {
+        style: type === 'satellite'
+            ? {color: '#f8fafc', weight: 2, fillColor: '#ffffff', fillOpacity: 0.04}
+            : {color: '#14532d', weight: 2, fillColor: '#d1fae5', fillOpacity: 0.35}
+    }).addTo(map);
+    map.fitBounds(boundaryLayer.getBounds(), {padding: [12, 12]});
+    if (type === 'rainfall') addRainfallPoints(map);
+    if (type === 'temperature') addTemperaturePoints(map);
+    if (type === 'alerts') addAlertPoints(map);
+    requestAnimationFrame(() => map.invalidateSize());
+}
+
+function addRainfallPoints(map) {
+    rainfallPoints = indiaWeatherPoints.map(point => {
+        const color = point.rain >= 50 ? '#ef4444' : point.rain >= 10 ? '#f59e0b' : '#06b6d4';
+        const marker = L.circleMarker([point.lat, point.lng], {
+            radius: Math.max(6, Math.min(15, point.rain / 5 + 5)),
+            color, fillColor: color, fillOpacity: 0.78, weight: 1
+        }).addTo(map);
+        marker.bindPopup(`<strong>${escapeHtml(point.name)}</strong><br>Rainfall: ${point.rain} mm in last 24 hours`);
+        return marker;
+    });
+}
+
+function addTemperaturePoints(map) {
+    indiaWeatherPoints.forEach(point => {
+        const color = point.temp >= 35 ? '#dc2626' : point.temp >= 30 ? '#f97316' : point.temp >= 25 ? '#eab308' : '#0ea5e9';
+        L.circleMarker([point.lat, point.lng], {
+            radius: 10, color, fillColor: color, fillOpacity: 0.8, weight: 1
+        }).addTo(map).bindTooltip(`${point.name}: ${point.temp}°C`, {permanent: true, direction: 'top'});
+    });
+}
+
+function addAlertPoints(map) {
+    [
+        {name: 'East India rainfall watch', lat: 22.57, lng: 88.36, color: '#dc2626'},
+        {name: 'West coast rainfall advisory', lat: 19.07, lng: 72.87, color: '#f59e0b'},
+        {name: 'Southern coast wind watch', lat: 13.08, lng: 80.27, color: '#0891b2'}
+    ].forEach(alert => L.circle([alert.lat, alert.lng], {
+        radius: 70000, color: alert.color, fillColor: alert.color, fillOpacity: 0.2, weight: 2
+    }).addTo(map).bindPopup(`<strong>${escapeHtml(alert.name)}</strong><br>Check official IMD updates before making safety decisions.`));
+}
+</script>
+
+<style>
+.india-map-placeholder {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    min-height: 400px;
+    position: relative;
+}
+
+.india-map-svg {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+}
+
+.india-leaflet-map {
+    width: 100%;
+    height: 430px;
+    min-height: 320px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #dbeafe;
+    z-index: 1;
+}
+
+.india-leaflet-map .leaflet-control-zoom {
+    z-index: 500;
+}
+
+.map-legend {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.legend-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.temp-gradient {
+    width: 200px;
+    height: 20px;
+    background: linear-gradient(to right, #4CAF50, #FFEB3B, #FF9800, #F44336, #9C27B0);
+    border-radius: 10px;
+    position: relative;
+}
+
+.temp-scale {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 0.8em;
+}
+
+.satellite-attribution-note {
+    position: absolute;
+    left: 32px;
+    bottom: 28px;
+    z-index: 400;
+    padding: 5px 9px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.72);
+    color: #fff;
+    font-size: 0.75rem;
+}
+
+.forecast-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 20px 10px;
+    margin-bottom: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.forecast-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.forecast-day {
+    font-weight: 600;
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.forecast-temp {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #495057;
+}
+
+.forecast-condition {
+    font-size: 0.8em;
+    color: #6c757d;
+}
+
+.weather-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.weather-details {
+    padding: 20px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.detail-label {
+    font-size: 0.8em;
+    color: #6c757d;
+    margin: 5px 0;
+}
+
+.detail-value {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.trend-item, .alert-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.trend-item:last-child, .alert-item:last-child {
+    border-bottom: none;
+}
+
+.alert-icon {
+    width: 40px;
+    text-align: center;
+}
+
+.rain-point {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.rain-point:hover {
+    transform: scale(1.3);
+    opacity: 1 !important;
+}
+
+</style>
+{% endblock %}
