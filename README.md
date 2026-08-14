@@ -46,13 +46,6 @@ Our platform addresses critical Sustainable Development Goals by providing voice
 └── instance/             # Database and configuration files
 ```
 
-<img width="2490" height="1152" alt="image" src="https://github.com/user-attachments/assets/2d1bd9f3-0594-49c5-af6c-3af412e86287" />
-<img width="2487" height="1203" alt="image" src="https://github.com/user-attachments/assets/62b44c75-d071-42b4-ad4b-9747b4cc3956" />
-<img width="2488" height="1112" alt="image" src="https://github.com/user-attachments/assets/3b8bd73c-ecab-4348-9473-b5f7ad087761" />
-<img width="2483" height="1147" alt="image" src="https://github.com/user-attachments/assets/2a8a1e14-13ef-492d-8033-e89529b0ce16" />
-<img width="2490" height="1308" alt="image" src="https://github.com/user-attachments/assets/3ac44d47-0749-4b60-9e67-0998edf8822e" />
-<img width="2489" height="1210" alt="image" src="https://github.com/user-attachments/assets/113f12f3-7afc-41df-9bbe-504d1fcfe23c" />
-
 ## Core Modules
 
 ### 1. Climate Action & Sustainability Module (`/climate`)
